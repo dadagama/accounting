@@ -6,5 +6,14 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'tattoo-app';
+  expanded: boolean;
+
+  constructor() {
+    this.expanded = false;
+  }
+
+  toggleMenu() {
+    console.log('togggle menu');
+    this.expanded = !this.expanded;
+  }
 }
