@@ -10,6 +10,8 @@ import { GridOptions } from 'ag-grid-community';
 // Interfaces
 import { Product } from 'src/app/interfaces/product';
 
+import { saveAs } from 'file-saver';
+
 @Component({
   selector: 'app-inventory-management',
   templateUrl: './inventory-management.component.html',
@@ -36,7 +38,6 @@ export class InventoryManagementComponent implements OnInit {
       {
         headerName: 'Imagen', width: 70,
         field: 'image', cellRenderer: (params) => {
-          console.log(params.data);
           if (params.data.image !== undefined) {
             return '<img src="assets/products/' + params.data.image + '" class="productImage"/>';
           }
@@ -45,6 +46,16 @@ export class InventoryManagementComponent implements OnInit {
         editable: true
       },
       { headerName: 'Producto', field: 'name', filter: 'agTextColumnFilter', editable: true },
+      {
+        headerName: 'Tiene Inventario', width: 100,
+        field: 'hasInventory', cellRenderer: (params) => {
+          if (params.data.hasInventory) {
+            return 'SI';
+          }
+          return 'NO';
+        },
+        editable: true
+      },
       {
         headerName: 'Cantidad', width: 100, editable: true,
         field: 'quantity', filter: 'agNumberColumnFilter'
@@ -86,12 +97,23 @@ export class InventoryManagementComponent implements OnInit {
   }
 
   createInitialForm() {
+    console.log('[component] - inventory - createInitialForm');
     return new FormGroup({
+      hasInventory: new FormControl(false, [Validators.required]),
       image: new FormControl(null),
       name: new FormControl(null, [Validators.required]),
-      quantity: new FormControl(null, [Validators.required]),
+      // quantity: new FormControl(null, [Validators.required]),
       tags: new FormControl(null, [Validators.required])
     });
+  }
+
+  onHasInventory(event) {
+    console.log('[component] - inventory - onHasInventory', event);
+    if (this.form.controls.hasInventory.value === true) {
+      this.form.addControl('quantity', new FormControl('', [Validators.required]));
+    } else {
+      this.form.removeControl('quantity');
+    }
   }
 
   onRemoveRecord(record: any) {
@@ -129,5 +151,24 @@ export class InventoryManagementComponent implements OnInit {
       this.selectedImageFile = event.target.files[0].name;
     }
   }
+  
+  saveToDisk() {
+    console.log('[component] - inventory - saveToDisk', event);
+    // TODO: REMOVE
+    const blob = new Blob([JSON.stringify(this.productService.getAllProducts())],
+    {type: 'text/plain;charset=utf-8'});
+    saveAs(blob, 'inventario.json');
+  }
+  
+  onOpenFile(event) {
+    console.log('[component] - inventory - onOpenFile', event);
+    const input = event.target;
 
+    const reader = new FileReader();
+    reader.onload = () => {
+      const text = reader.result;
+      console.log(text);
+    };
+    reader.readAsText(input.files[0]);
+  }
 }

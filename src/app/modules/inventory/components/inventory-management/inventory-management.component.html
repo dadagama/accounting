@@ -8,7 +8,7 @@
     <div class="card mb-3">
       <div class="card-body" *ngIf="!showForm">
           <div class="card-text text-center">
-            <button class="btn btn-primary" (click)="showForm = true;"><i class="fa fa-plus mr-2"></i>Agregar</button>
+            <button class="btn btn-primary" (click)="showForm = true;"><i class="fa fa-plus mr-2"></i>Agregar Nuevo</button>
           </div>
       </div>
       <div class="card-body" *ngIf="showForm">
@@ -20,7 +20,7 @@
               <div class="input-group">
                   <div class="custom-file">
                     <input type="file" class="custom-file-input" id="image" formControlName="image" (change)="onImageSelected($event)">
-                    <label class="custom-file-label" for="image">Seleccionar Imagen</label>
+                    <label class="custom-file-label" for="image">{{selectedImageFile}}</label>
                   </div>
               </div>
             </div>
@@ -28,7 +28,11 @@
               <label for="name">Nombre</label>
               <input type="text" class="form-control" id="name" formControlName="name" placeholder="Ingrese el nombre del producto"/>
             </div>
-            <div class="form-group mandatory-field">
+            <div class="form-group">
+              <label for="hasInventory">Tiene Inventario</label>
+              <input type="checkbox" class="form-control" id="hasInventory" formControlName="hasInventory" (change)="onHasInventory($event)"/>
+            </div>
+            <div class="form-group mandatory-field" *ngIf="form.controls.hasInventory">
               <label for="quantity">Cantidad</label>
               <input type="number" class="form-control" id="quantity" formControlName="quantity" placeholder="Ingrese la cantidad"/>
             </div>
@@ -37,12 +41,18 @@
               <input type="text" class="form-control" id="tags" formControlName="tags" placeholder="Ingrese las etiquetas separadas por comas"/>
             </div>
             <div class="form-group text-center">
-              <button type="submit" class="btn btn-primary"><i class="fa fa-save mr-2"></i>Guardar</button>
+              <button type="submit" class="btn btn-primary"><i class="fa fa-plus mr-2"></i>Agregar</button>
             </div>
           </form>
         </div>
       </div>
     </div>
   </div>
-
+</div>
+<div class="row mt-2">
+  <div class="col-md-12">
+    <button class="btn btn-info mr-2" (click)="loadInventoryFile.click()"><i class="fa fa-folder-open mr-2"></i>Cargar Inventario</button>
+    <input #loadInventoryFile type="file" style="display:none" class="custom-file-input" (change)="onOpenFile($event)">
+    <button class="btn btn-info" (click)="saveToDisk()"><i class="fa fa-save mr-2"></i>Guardar Cambios</button>
+  </div>
 </div>
