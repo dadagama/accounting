@@ -4,6 +4,11 @@ import { ActivatedRoute } from '@angular/router';
 // AG Grid
 import { GridOptions } from 'ag-grid-community';
 import { DeleteButtonRendererComponent } from 'src/app/components/delete-button-renderer/delete-button-renderer.component';
+import { UtilitiesService } from 'src/app/services/utilities.service';
+import { ProductService } from 'src/app/services/product.service';
+import { Product } from 'src/app/interfaces/product';
+import { Seller } from 'src/app/interfaces/seller';
+import { SellerService } from 'src/app/services/seller.service';
 
 @Component({
   selector: 'app-accounting-management',
@@ -13,7 +18,7 @@ import { DeleteButtonRendererComponent } from 'src/app/components/delete-button-
 export class AccountingManagementComponent implements OnInit {
 
   gridOptions: GridOptions = {
-    rowHeight: 35,
+    rowHeight: 36,
     stopEditingWhenGridLosesFocus: true,
     context: {
       componentParent: this,
@@ -23,24 +28,39 @@ export class AccountingManagementComponent implements OnInit {
       deleteButtonRenderer: DeleteButtonRendererComponent
     },
     columnDefs: [
-      { headerName: 'Id', field: 'id', editable: false, hide: true },
       {
-        headerName: 'Imagen', width: 70,
-        field: 'image', cellRenderer: (params) => {
-          console.log(params.data);
-          if (params.data.image !== undefined) {
-            return '<img src="assets/products/' + params.data.image + '" class="productImage"/>';
+        headerName: 'Hora',
+        field: 'timestamp',
+        cellRenderer: params => { const date = new Date(params.data.timestamp); return '' + date.getHours() + ':' + date.getMinutes(); }
+      },
+      {
+        headerName: 'Imagen',
+        width: 70,
+        cellRenderer: (params) => {
+          const product: Product = this.productService.getProductById(params.data.productId);
+          if (product.image !== undefined) {
+            return '<img src="assets/products/' + product.image + '" class="productImage"/>';
           }
-          return '';
-        },
-        editable: true
+          return this.utilitiesService.ICON_UNKNOWN;
+        }
       },
-      { headerName: 'Producto', field: 'name', filter: 'agTextColumnFilter', editable: true },
       {
-        headerName: 'Cantidad', width: 100, editable: true,
-        field: 'quantity', filter: 'agNumberColumnFilter'
+        headerName: 'Producto',
+        filter: 'agTextColumnFilter',
+        cellRenderer: (params) => {
+          const product: Product = this.productService.getProductById(params.data.productId);
+          return product.name;
+        }
       },
-      { headerName: 'Etiquetas', field: 'tags', editable: true, filter: 'agTextColumnFilter' },
+      {
+        headerName: 'Responsable',
+        filter: 'agTextColumnFilter',
+        cellRenderer: (params) => {
+          const seller: Seller = this.sellerService.getSellerById(params.data.sellerId);
+          return seller.name;
+        }
+      },
+      { headerName: 'Factura', field: 'ticketId', filter: 'agTextColumnFilter' },
       {
         headerName: 'Opciones', width: 115, pinned: 'right', lockPosition: true, lockVisible: true,
         resizable: false, suppressSizeToFit: true, lockPinned: true, cellRenderer: 'deleteButtonRenderer'
@@ -48,24 +68,20 @@ export class AccountingManagementComponent implements OnInit {
     ],
     onGridReady: () => {
       console.log('[component] - accounting - onGridReady');
-      // this.gridOptions.api.setRowData(this.productService.getAllProducts());
-      // this.gridOptions.api.sizeColumnsToFit();
     },
     onCellValueChanged: (event) => {
       console.log('[component] - accounting - cell edited', event);
       if (event.oldValue === event.newValue) {
         return;
       }
-      // const product: Product = event.data;
-      // if (typeof product.tags === 'string') {
-      //   product.tags = event.data.tags.split(',');
-      // }
-      // this.productService.updateProduct(product);
     }
   };
 
-
-  constructor(private route: ActivatedRoute) {
+  constructor(
+    private route: ActivatedRoute,
+    private productService: ProductService,
+    private sellerService: SellerService,
+    private utilitiesService: UtilitiesService) {
     console.log('[component] - accounting - constructor');
   }
 

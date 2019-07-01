@@ -23,7 +23,7 @@ export class InventoryManagementComponent implements OnInit {
   form: FormGroup;
   selectedImageFile: string;
   gridOptions: GridOptions = {
-    rowHeight: 35,
+    rowHeight: 36,
     stopEditingWhenGridLosesFocus: true,
     context: {
       componentParent: this,

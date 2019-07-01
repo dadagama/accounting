@@ -35,6 +35,9 @@ export class ProductService {
   removeAllProducts() {
     return this.storeService.removeAllProducts();
   }
+  getProductById(id: string) {
+    return this.storeService.getProductById(id);
+  }
   private sanitizeProduct(product: Product) {
     if (typeof product.tags === 'string') {
       product.tags = product.tags.split(',');
