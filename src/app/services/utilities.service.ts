@@ -7,6 +7,10 @@ import { Product } from '../interfaces/product';
 })
 export class UtilitiesService {
 
+  ICON_YES = '<i class="fa fa-check fa-2x fa-fw text-success"></i>';
+  ICON_NO = '<i class="fa fa-times fa-2x fa-fw text-danger"></i>';
+  ICON_UNKNOWN = '<i class="fa fa-question-circle fa-2x fa-fw"></i>';
+
   constructor() { }
 
   markFormGroupTouched(formGroup: FormGroup) {

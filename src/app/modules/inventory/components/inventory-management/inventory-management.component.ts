@@ -5,7 +5,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ProductService } from 'src/app/services/product.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 // Ag Grid
-import { DeleteButtonRendererComponent } from 'src/app/components/delete-button-renderer/delete-button-renderer.component';
+// import { DeleteButtonRendererComponent } from 'src/app/components/delete-button-renderer/delete-button-renderer.component';
 import { GridOptions } from 'ag-grid-community';
 // Interfaces
 import { Product } from 'src/app/interfaces/product';
@@ -19,7 +19,6 @@ import { saveAs } from 'file-saver';
   encapsulation: ViewEncapsulation.Emulated
 })
 export class InventoryManagementComponent implements OnInit {
-
   showForm: boolean;
   form: FormGroup;
   selectedImageFile: string;
@@ -28,11 +27,11 @@ export class InventoryManagementComponent implements OnInit {
     stopEditingWhenGridLosesFocus: true,
     context: {
       componentParent: this,
-      onDeleteRowCallback: 'onRemoveRecord'
+      onDeleteRowCallback: 'onRemoveProduct'
     },
-    frameworkComponents: {
-      deleteButtonRenderer: DeleteButtonRendererComponent
-    },
+    // frameworkComponents: {
+    //   deleteButtonRenderer: DeleteButtonRendererComponent
+    // },
     columnDefs: [
       { headerName: 'Id', field: 'id', editable: false, hide: true },
       {
@@ -41,30 +40,44 @@ export class InventoryManagementComponent implements OnInit {
           if (params.data.image !== undefined) {
             return '<img src="assets/products/' + params.data.image + '" class="productImage"/>';
           }
-          return '';
+          return this.utilitiesService.ICON_UNKNOWN;
         },
         editable: true
       },
-      { headerName: 'Producto', field: 'name', filter: 'agTextColumnFilter', editable: true },
+      { headerName: 'Nombre', field: 'name', filter: 'agTextColumnFilter', editable: true },
       {
-        headerName: 'Tiene Inventario', width: 100,
-        field: 'hasInventory', cellRenderer: (params) => {
-          if (params.data.hasInventory) {
-            return 'SI';
-          }
-          return 'NO';
-        },
+        headerName: 'Es Visible', width: 60,
+        field: 'isVisible',
+        cellRenderer: params => params.data.isVisible === true ? this.utilitiesService.ICON_YES : this.utilitiesService.ICON_NO,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: { values: ['true', 'false'] },
         editable: true
       },
       {
-        headerName: 'Cantidad', width: 100, editable: true,
+        headerName: 'Necesita Vendedor', width: 80,
+        field: 'needsSeller',
+        cellRenderer: params => params.data.needsSeller === true ? this.utilitiesService.ICON_YES : this.utilitiesService.ICON_NO,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: { values: ['true', 'false'] },
+        editable: true
+      },
+      {
+        headerName: 'Necesita Inventario', width: 80,
+        field: 'needsInventory',
+        cellRenderer: params => params.data.needsInventory === true ? this.utilitiesService.ICON_YES : this.utilitiesService.ICON_NO,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: { values: ['true', 'false'] },
+        editable: true
+      },
+      {
+        headerName: 'Cantidad', width: 60, editable: true,
         field: 'quantity', filter: 'agNumberColumnFilter'
       },
       { headerName: 'Etiquetas', field: 'tags', editable: true, filter: 'agTextColumnFilter' },
-      {
-        headerName: 'Opciones', width: 115, pinned: 'right', lockPosition: true, lockVisible: true,
-        resizable: false, suppressSizeToFit: true, lockPinned: true, cellRenderer: 'deleteButtonRenderer'
-      }
+      // {
+      //   headerName: 'Opciones', width: 115, pinned: 'right', lockPosition: true, lockVisible: true,
+      //   resizable: false, suppressSizeToFit: true, lockPinned: true, cellRenderer: 'deleteButtonRenderer'
+      // }
     ],
     onGridReady: () => {
       console.log('[component] - inventory - onGridReady');
@@ -77,9 +90,6 @@ export class InventoryManagementComponent implements OnInit {
         return;
       }
       const product: Product = event.data;
-      if (typeof product.tags === 'string') {
-        product.tags = event.data.tags.split(',');
-      }
       this.productService.updateProduct(product);
     }
   };
@@ -99,26 +109,27 @@ export class InventoryManagementComponent implements OnInit {
   createInitialForm() {
     console.log('[component] - inventory - createInitialForm');
     return new FormGroup({
-      hasInventory: new FormControl(false, [Validators.required]),
       image: new FormControl(null),
+      isVisible: new FormControl('true', [Validators.required]),
       name: new FormControl(null, [Validators.required]),
-      // quantity: new FormControl(null, [Validators.required]),
+      needsInventory: new FormControl('false', [Validators.required]),
+      needsSeller: new FormControl('false', [Validators.required]),
       tags: new FormControl(null, [Validators.required])
     });
   }
 
-  onHasInventory(event) {
-    console.log('[component] - inventory - onHasInventory', event);
-    if (this.form.controls.hasInventory.value === true) {
+  onNeedsInventory(event) {
+    console.log('[component] - inventory - onNeedsInventory', event);
+    if (this.form.controls.needsInventory.value === 'true') {
       this.form.addControl('quantity', new FormControl('', [Validators.required]));
     } else {
       this.form.removeControl('quantity');
     }
   }
 
-  onRemoveRecord(record: any) {
-    console.log('[component] - inventory - onRemoveRecord', record);
-    this.productService.removeProduct(record);
+  onRemoveProduct(product: any) {
+    console.log('[component] - inventory - onRemoveProduct', product);
+    this.productService.removeProduct(product);
     return true;
   }
 
@@ -132,43 +143,33 @@ export class InventoryManagementComponent implements OnInit {
   }
 
   saveProduct(product: Product) {
-    product.image = this.selectedImageFile;
-    if (typeof product.tags === 'string') {
-      const tempTags: string = product.tags;
-      product.tags = tempTags.split(',');
-    }
     console.log('[component] - inventory - saveProduct', product);
     this.productService.addProduct(product);
     this.gridOptions.api.addItems([product]);
     this.form.reset();
-    this.selectedImageFile = undefined;
     this.showForm = false;
   }
 
-  onImageSelected(event) {
-    console.log('[component] - inventory - onImageSelected', event);
-    if (event.target.files.length > 0) {
-      this.selectedImageFile = event.target.files[0].name;
-    }
-  }
-  
-  saveToDisk() {
-    console.log('[component] - inventory - saveToDisk', event);
-    // TODO: REMOVE
+  onSaveInventory() {
+    console.log('[component] - inventory - onSaveInventory', event);
     const blob = new Blob([JSON.stringify(this.productService.getAllProducts())],
     {type: 'text/plain;charset=utf-8'});
     saveAs(blob, 'inventario.json');
   }
-  
-  onOpenFile(event) {
-    console.log('[component] - inventory - onOpenFile', event);
+
+  onLoadInventory(event) {
+    console.log('[component] - inventory - onLoadInventory', event);
     const input = event.target;
 
     const reader = new FileReader();
-    reader.onload = () => {
-      const text = reader.result;
-      console.log(text);
+    reader.onload = (evt) => {
+      const products: Product[] = JSON.parse(reader.result as string);
+      this.productService.removeAllProducts();
+      products.forEach((product: Product) => this.productService.addProduct(product));
+      this.gridOptions.api.setRowData(products);
+      this.gridOptions.api.sizeColumnsToFit();
     };
     reader.readAsText(input.files[0]);
+
   }
 }

@@ -1,19 +1,25 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+<nav class="navbar navbar-expand-lg navbar-dark mb-3 main-app-nav">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03"
         aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <a class="navbar-brand" href="#">
-        <img [src]="'assets/logo.png'" width="73" height="58" alt="Rafael Gomez Tattoo Studio">
+        <img [src]="'assets/logo.png'" width="50" height="50" alt="Rafael Gomez Tattoo Studio">
     </a>
 
     <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item" [routerLinkActive]="['active']">
-                <a class="nav-link" [routerLink]="['/inventario']">Inventario</a>
+                <a class="nav-link" [routerLink]="['/inventario']"><i class="fa fa-box-open mr-2"></i>Inventario</a>
             </li>
             <li class="nav-item" [routerLinkActive]="['active']">
-                <a class="nav-link" [routerLink]="['/contabilidad']">Contabilidad</a>
+                <a class="nav-link" [routerLink]="['/contabilidad']"><i class="fa fa-th-list mr-2"></i>Contabilidad</a>
+            </li>
+            <li class="nav-item" [routerLinkActive]="['active']">
+                <a class="nav-link" [routerLink]="['/reportes']"><i class="fa fa-chart-pie mr-2"></i>Reportes</a>
+            </li>
+            <li class="nav-item" [routerLinkActive]="['active']">
+                <a class="nav-link" [routerLink]="['/acerca-de']"><i class="fa fa-info mr-2"></i>Acerca De</a>
             </li>
         </ul>
     </div>

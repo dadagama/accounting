@@ -17,22 +17,34 @@
           <form [formGroup]="form" (ngSubmit)="onSubmitForm()" novalidate>
             <div class="form-group">
               <label for="image">Imagen</label>
-              <div class="input-group">
-                  <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="image" formControlName="image" (change)="onImageSelected($event)">
-                    <label class="custom-file-label" for="image">{{selectedImageFile}}</label>
-                  </div>
-              </div>
+              <input type="text" class="form-control" id="image" formControlName="image" placeholder="Ingrese el nombre de la imagen"/>
             </div>
             <div class="form-group mandatory-field">
               <label for="name">Nombre</label>
               <input type="text" class="form-control" id="name" formControlName="name" placeholder="Ingrese el nombre del producto"/>
             </div>
-            <div class="form-group">
-              <label for="hasInventory">Tiene Inventario</label>
-              <input type="checkbox" class="form-control" id="hasInventory" formControlName="hasInventory" (change)="onHasInventory($event)"/>
+            <div class="form-group mandatory-field">
+              <label for="isVisible">Es Visible en contabilidad</label>
+              <select class="form-control" id="isVisible" formControlName="isVisible">
+                <option value="false">No</option>
+                <option value="true">Si</option>
+              </select>
             </div>
-            <div class="form-group mandatory-field" *ngIf="form.controls.hasInventory">
+            <div class="form-group mandatory-field">
+              <label for="needsSeller">Necesita Vendedor</label>
+              <select class="form-control" id="needsSeller" formControlName="needsSeller">
+                <option value="false">No</option>
+                <option value="true">Si</option>
+              </select>
+            </div>
+            <div class="form-group mandatory-field">
+              <label for="needsInventory">Necesita Inventario</label>
+              <select class="form-control" id="needsInventory" formControlName="needsInventory" (change)="onNeedsInventory($event)">
+                <option value="false">No</option>
+                <option value="true">Si</option>
+              </select>
+            </div>
+            <div class="form-group mandatory-field" *ngIf="form.controls.needsInventory.value === 'true'">
               <label for="quantity">Cantidad</label>
               <input type="number" class="form-control" id="quantity" formControlName="quantity" placeholder="Ingrese la cantidad"/>
             </div>
@@ -52,7 +64,7 @@
 <div class="row mt-2">
   <div class="col-md-12">
     <button class="btn btn-info mr-2" (click)="loadInventoryFile.click()"><i class="fa fa-folder-open mr-2"></i>Cargar Inventario</button>
-    <input #loadInventoryFile type="file" style="display:none" class="custom-file-input" (change)="onOpenFile($event)">
-    <button class="btn btn-info" (click)="saveToDisk()"><i class="fa fa-save mr-2"></i>Guardar Cambios</button>
+    <input #loadInventoryFile type="file" style="display:none" class="custom-file-input" (change)="onLoadInventory($event)">
+    <button class="btn btn-info" (click)="onSaveInventory()"><i class="fa fa-save mr-2"></i>Guardar Cambios</button>
   </div>
 </div>
