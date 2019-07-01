@@ -1,1 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* estilos para validaciones formularios */
+textarea.ng-invalid.ng-dirty, textarea.ng-invalid.ng-touched,
+input.ng-invalid.ng-dirty, input.ng-invalid.ng-touched,
+.ng-select.ng-invalid.ng-dirty div.ng-select-container, .ng-select.ng-invalid.ng-touched div.ng-select-container 
+.ng-select.custom-invalid.ng-dirty div.ng-select-container, .ng-select.custom-invalid.ng-touched div.ng-select-container {
+    border: 1px solid red;
+}
+div.mandatory-field {
+    label::after {
+        content: ' *';
+        color: red;
+    }
+}
