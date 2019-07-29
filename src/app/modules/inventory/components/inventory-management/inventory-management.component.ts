@@ -48,9 +48,10 @@ export class InventoryManagementComponent implements OnInit {
       {
         headerName: 'Es Visible', width: 60,
         field: 'isVisible',
-        cellRenderer: params => params.data.isVisible === true ? this.utilitiesService.ICON_YES : this.utilitiesService.ICON_NO,
+        // cellRenderer: params =>  {console.log('rederer', params); return params.data.isVisible === true ? this.utilitiesService.ICON_YES : this.utilitiesService.ICON_NO; },
         cellEditor: 'agSelectCellEditor',
-        cellEditorParams: { values: ['true', 'false'] },
+        cellEditorParams: { values: ['Si', 'No'] },
+        valueParser: (params) => {console.log('parser', params); return params.newValue === 'Si'; },
         editable: true
       },
       {
@@ -74,10 +75,6 @@ export class InventoryManagementComponent implements OnInit {
         field: 'quantity', filter: 'agNumberColumnFilter'
       },
       { headerName: 'Etiquetas', field: 'tags', editable: true, filter: 'agTextColumnFilter' },
-      // {
-      //   headerName: 'Opciones', width: 115, pinned: 'right', lockPosition: true, lockVisible: true,
-      //   resizable: false, suppressSizeToFit: true, lockPinned: true, cellRenderer: 'deleteButtonRenderer'
-      // }
     ],
     onGridReady: () => {
       console.log('[component] - inventory - onGridReady');

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Product } from '../interfaces/product';
+import { Record } from '../interfaces/record';
 import { Seller } from '../interfaces/seller';
 
 @Injectable({
@@ -9,6 +10,20 @@ export class StoreService {
 
   constructor() {
     console.log('[service] - store - constructor');
+    const products: Product[] = JSON.parse(localStorage.getItem('products') || '[]');
+    const sellers: Seller[] = JSON.parse(localStorage.getItem('sellers') || '[]');
+    const records: Record[] = JSON.parse(localStorage.getItem('records') || '[]');
+    if (products.length === 0) {
+      localStorage.setItem('products', '[]');
+    }
+    if (sellers.length === 0) {
+      const s: Seller = {id: '123', name: 'darwin', isVisible: true};
+      localStorage.setItem('sellers', JSON.stringify([s]));
+      // localStorage.setItem('sellers', '[]');
+    }
+    if (records.length === 0) {
+      localStorage.setItem('records', '[]');
+    }
   }
 
   //////////////////////////
@@ -57,9 +72,9 @@ export class StoreService {
   }
 
 
-    /////////////////////////
-    //  SELLER OPERATIONS  //
-    /////////////////////////
+  /////////////////////////
+  //  SELLER OPERATIONS  //
+  /////////////////////////
 
 
   saveSeller(seller: Seller): boolean {
@@ -73,7 +88,7 @@ export class StoreService {
   updateSeller(seller: Seller): boolean {
     console.log('[service] - store - updateSeller', seller);
     const sellers: Seller[] = JSON.parse(localStorage.getItem('sellers') || '[]');
-    const sellerIndex = sellers.findIndex(p => seller.id === p.id);
+    const sellerIndex = sellers.findIndex(s => seller.id === s.id);
     sellers[sellerIndex] = seller;
     localStorage.setItem('sellers', JSON.stringify(sellers));
     return true;
@@ -81,7 +96,7 @@ export class StoreService {
   removeSeller(seller: Seller): boolean {
     console.log('[service] - store - removeSeller', seller);
     const sellers: Seller[] = JSON.parse(localStorage.getItem('sellers') || '[]');
-    const index = sellers.findIndex((p: Seller) => p.id === seller.id);
+    const index = sellers.findIndex((s: Seller) => s.id === seller.id);
     if (index !== -1) {
       sellers.splice(index, 1);
       localStorage.setItem('sellers', JSON.stringify(sellers));
@@ -100,7 +115,45 @@ export class StoreService {
   }
   getSellerById(id: string) {
     const sellers: Seller[] = JSON.parse(localStorage.getItem('sellers') || '[]');
-    const seller = sellers.find((p: Seller) => p.id === id);
+    const seller = sellers.find((s: Seller) => s.id === id);
     return seller;
+  }
+
+  /////////////////////////
+  //  RECORD OPERATIONS  //
+  /////////////////////////
+
+
+  saveRecord(record: Record): boolean {
+    console.log('[service] - store - saveRecord', record);
+    let records: Record[] = JSON.parse(localStorage.getItem('records') || '[]');
+    records = records === null ? [] : records;
+    records.push(record);
+    localStorage.setItem('records', JSON.stringify(records));
+    return true;
+  }
+  updateRecord(record: Record): boolean {
+    console.log('[service] - store - updateRecord', record);
+    const records: Record[] = JSON.parse(localStorage.getItem('records') || '[]');
+    const recordIndex = records.findIndex(r => record.id === r.id);
+    records[recordIndex] = record;
+    localStorage.setItem('records', JSON.stringify(records));
+    return true;
+  }
+  removeRecord(record: Record): boolean {
+    console.log('[service] - store - removeRecord', record);
+    const records: Record[] = JSON.parse(localStorage.getItem('records') || '[]');
+    const index = records.findIndex((r: Record) => r.id === record.id);
+    if (index !== -1) {
+      records.splice(index, 1);
+      localStorage.setItem('records', JSON.stringify(records));
+      return true;
+    }
+    throw Error('Record does not exists');
+  }
+  getAllRecords(): Record[] {
+    console.log('[service] - store - getAllRecords');
+    const records: Record[] = JSON.parse(localStorage.getItem('records') || '[]');
+    return records;
   }
 }

@@ -1,5 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
-
+body {
+    padding-top: 91px;
+}
 /* estilos para validaciones formularios */
 textarea.ng-invalid.ng-dirty, textarea.ng-invalid.ng-touched,
 input.ng-invalid.ng-dirty, input.ng-invalid.ng-touched,

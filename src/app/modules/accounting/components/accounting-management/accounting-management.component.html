@@ -1,10 +1,50 @@
 <div class="row">
-    <div class="col-md-8">
-      <ag-grid-angular style="width: 100%; height:600px" class="ag-theme-balham" [gridOptions]="gridOptions">
-        </ag-grid-angular>
-      </div>
-      <div class="col-md-4">
-        panel
-      </div>
+  <div class="col-md-8">
+    <table class="table table-striped table-hover table-compact">
+      <thead class="thead-dark">
+        <tr>
+          <th>Hora</th>
+          <th>Producto</th>
+          <th>Responsable</th>
+          <th>Descripción</th>
+          <th>Factura</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let record of formattedRecords">
+          <td>{{record.date}}</td>
+          <td>
+            <i class="fa fa-question-circle fa-2x fa-fw" *ngIf="record.productImage === ''"></i>
+            <img *ngIf="record.productImage !== ''" [src]="'assets/products/' + record.productImage"
+              class="productImage" />
+            <span class="ml-3">{{record.productName}}</span>
+          </td>
+          <td>{{record.sellerName}}</td>
+          <td>{{record.description}}</td>
+          <td>{{record.ticketId}}</td>
+        </tr>
+      </tbody>
+      <tfoot></tfoot>
+    </table>
+    <!-- <ag-grid-angular style="width: 100%; height:600px" class="ag-theme-balham" [gridOptions]="gridOptions">
+        </ag-grid-angular> -->
   </div>
-  
+  <div class="col-md-4">
+    <div class="row">
+      <div *ngIf="this.currentTicketId !== undefined" class="d-flex align-content-start flex-wrap">
+        <button *ngFor="let product of visibleProducts; trackBy: trackRecordFn" placement="top"
+          ngbTooltip="{{product.name}}" class="btn btn-outline-secondary mr-3 mb-3 product-button" (click)="createRecord(product.id)">
+          <img *ngIf="product.image !== ''" [src]="'assets/products/' + product.image"
+            class="product-image mx-auto d-block" />
+          <span class="product-name mx-auto d-block">{{product.name}}</span>
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <button *ngIf="this.currentTicketId === undefined" (click)="startSelling()" class="btn btn-primary">
+        <i class="fa fa-box-open mr-3"></i>Nueva Factura</button>
+      <button *ngIf="this.currentTicketId !== undefined" (click)="stopSelling()" class="btn btn-warning">
+        <i class="fa fa-box mr-3"></i>Cerrar Factura</button>
+    </div>
+  </div>
+</div>

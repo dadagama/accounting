@@ -1,0 +1,11 @@
+.product-button:hover {
+    .product-image {
+        filter: invert(100%); 
+    }
+}
+.product-button {
+    width: 100px;
+    .product-name {
+        font-size: 0.7em;
+    }
+}
