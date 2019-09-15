@@ -10,6 +10,7 @@ export class AppComponent {
 
   constructor() {
     this.expanded = false;
+    alert('todo: rightdrawer!');
   }
 
   toggleMenu() {

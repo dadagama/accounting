@@ -7,11 +7,11 @@
           <th>Producto</th>
           <th>Responsable</th>
           <th>Descripción</th>
-          <th>Factura</th>
+          <th style="width: 140px;"></th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let record of formattedRecords">
+        <tr *ngFor="let record of formattedRecords; trackBy: trackByIdFn" [ngClass]="{'bg-success': record.id === form.controls.selectedRecordId.value}">
           <td>{{record.date}}</td>
           <td>
             <i class="fa fa-question-circle fa-2x fa-fw" *ngIf="record.productImage === ''"></i>
@@ -21,30 +21,75 @@
           </td>
           <td>{{record.sellerName}}</td>
           <td>{{record.description}}</td>
-          <td>{{record.ticketId}}</td>
+          <td>
+            <button type="button" class="btn btn-light mr-3" (click)="setSelectedRecord(record)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button type="button" class="btn btn-light" (click)="deleteRecord(record)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
         </tr>
       </tbody>
       <tfoot></tfoot>
     </table>
-    <!-- <ag-grid-angular style="width: 100%; height:600px" class="ag-theme-balham" [gridOptions]="gridOptions">
-        </ag-grid-angular> -->
   </div>
   <div class="col-md-4">
-    <div class="row">
-      <div *ngIf="this.currentTicketId !== undefined" class="d-flex align-content-start flex-wrap">
-        <button *ngFor="let product of visibleProducts; trackBy: trackRecordFn" placement="top"
-          ngbTooltip="{{product.name}}" class="btn btn-outline-secondary mr-3 mb-3 product-button" (click)="createRecord(product.id)">
-          <img *ngIf="product.image !== ''" [src]="'assets/products/' + product.image"
-            class="product-image mx-auto d-block" />
-          <span class="product-name mx-auto d-block">{{product.name}}</span>
-        </button>
+    <form [formGroup]="form" (ngSubmit)="onSubmitForm(form)" novalidate>
+      <div class="row">
+        <label>
+          <div class="col-md-12">
+            Producto
+          </div>
+        </label>
       </div>
-    </div>
-    <div class="row">
-      <button *ngIf="this.currentTicketId === undefined" (click)="startSelling()" class="btn btn-primary">
-        <i class="fa fa-box-open mr-3"></i>Nueva Factura</button>
-      <button *ngIf="this.currentTicketId !== undefined" (click)="stopSelling()" class="btn btn-warning">
-        <i class="fa fa-box mr-3"></i>Cerrar Factura</button>
-    </div>
+      <div class="row">
+        <div class="col-md-12 d-flex align-content-start flex-wrap">
+          <button type="button" *ngFor="let product of visibleProducts; trackBy: trackByIdFn" placement="top"
+            ngbTooltip="{{product.name}}" class="btn mr-3 mb-3 product-button"
+            [ngClass]="{'btn-primary': product.id === form.controls.selectedProductId.value && !form.controls.selectedRecordId.value, 'btn-success': product.id === form.controls.selectedProductId.value && form.controls.selectedRecordId.value, 'btn-outline-secondary': product.id !== form.controls.selectedProductId.value}"
+            (click)="setSelectedProduct(product)">
+            <img *ngIf="product.image !== ''" [src]="'assets/products/' + product.image"
+              class="product-image mx-auto d-block" />
+            <span class="product-name mx-auto d-block">{{product.name}}</span>
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <label>
+          <div class="col-md-12">
+            Responsable
+          </div>
+        </label>
+      </div>
+      <div class="row">
+        <div class="col-md-12 d-flex align-content-start flex-wrap">
+          <button type="button" *ngFor="let seller of visibleSellers; trackBy: trackByIdFn" placement="top"
+            ngbTooltip="{{seller.name}}" class="btn mr-3 mb-3 seller-button"
+            [ngClass]="{'btn-primary': seller.id === form.controls.selectedSellerId.value && !form.controls.selectedRecordId.value, 'btn-success': seller.id === form.controls.selectedSellerId.value && form.controls.selectedRecordId.value, 'btn-outline-secondary': seller.id !== form.controls.selectedSellerId.value}"
+            (click)="setSelectedSeller(seller)">
+            <i class="fa fa-user"></i>
+            <span class="seller-name mx-auto d-block">{{seller.name}}</span>
+          </button>
+        </div>
+      </div>
+      <!-- <div class="row"> -->
+      <div class="form-group">
+        <label for="description">Descripción</label>
+        <input type="text" class="form-control" id="description" formControlName="description"
+          placeholder="Ingrese una descripción" />
+      </div>
+      <!-- </div> -->
+      <div class="row">
+        <div class="col-md-12">
+          <button type="submit" class="btn mr-3" [disabled]="form.invalid"
+            [ngClass]="{'btn-primary': form.valid && !form.controls.selectedRecordId.value, 'btn-success': form.valid && form.controls.selectedRecordId.value, 'btn-dark': form.invalid}">
+            <i class="fa mr-3" [ngClass]="{'fa-plus': !form.controls.selectedRecordId.value}"></i>
+            {{form.controls.selectedRecordId.value ? 'Actualizar' : 'Agregar'}}
+          </button>
+          <button *ngIf="form.valid" type="reset" class="btn btn-warning"><i class="fa fa-times mr-3"></i>Cancelar</button>
+        </div>
+      </div>
+    </form>
   </div>
 </div>

@@ -3,9 +3,9 @@
         filter: invert(100%); 
     }
 }
-.product-button {
+.product-button, .seller-button {
     width: 100px;
-    .product-name {
+    .product-name, .seller-name {
         font-size: 0.7em;
     }
 }

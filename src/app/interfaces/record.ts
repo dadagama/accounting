@@ -1,8 +1,8 @@
 export interface Record {
+    description?: string;
     id?: string;
-    ticketId?: string;
-    timestamp: number;
     productId: string;
     sellerId?: string;
-    description?: string;
+    ticketId?: string;
+    timestamp?: number;
 }

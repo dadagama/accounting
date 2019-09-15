@@ -7,11 +7,13 @@ import { InventoryModule } from './modules/inventory/inventory.module';
 import { AccountingModule } from './modules/accounting/accounting.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { AboutComponent } from './components/about/about.component';
+import { AppModalConfirmComponent } from './components/app-modal-confirm/app-modal-confirm.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    AboutComponent
+    AboutComponent,
+    AppModalConfirmComponent
   ],
   imports: [
     BrowserModule,

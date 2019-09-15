@@ -18,7 +18,8 @@ export class StoreService {
     }
     if (sellers.length === 0) {
       const s: Seller = {id: '123', name: 'darwin', isVisible: true};
-      localStorage.setItem('sellers', JSON.stringify([s]));
+      const s2: Seller = {id: '456', name: 'meli', isVisible: true};
+      localStorage.setItem('sellers', JSON.stringify([s, s2]));
       // localStorage.setItem('sellers', '[]');
     }
     if (records.length === 0) {
@@ -136,6 +137,9 @@ export class StoreService {
     console.log('[service] - store - updateRecord', record);
     const records: Record[] = JSON.parse(localStorage.getItem('records') || '[]');
     const recordIndex = records.findIndex(r => record.id === r.id);
+    // we should maintain the original timestamp during update
+    const timestamp = records[recordIndex].timestamp;
+    record.timestamp = timestamp;
     records[recordIndex] = record;
     localStorage.setItem('records', JSON.stringify(records));
     return true;
