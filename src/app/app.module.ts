@@ -33,12 +33,12 @@ export class AppModule { }
 
 
 // TODO:
-// - al agregar nuevo record, disminuir inventario (si el producto tiene inventario) se puede hacer un nuevo api call (PUT /product/:product_id/decreaseInventory o desde el POST /record)
 // - al actualizar un record, si cambia de producto toca modificar inventario tambien (quitar del nuevo producto y sumar al viejo)
 // - al borrar record, aumentar inventario nuevamente del producto (PUT /product/:product_id/increaseInventory o desde el PUT /record)
 // - deshabilitar producto si no tiene inventario
 // - grafico reporte
 // - calculadora / suma con checkboxes
+// - datepicker para cambiar de dia en la contabilidad
 // - ngb-toast para mensajes de error
 // - modulos de ADMIN con clave
 // - menu colapsable movil

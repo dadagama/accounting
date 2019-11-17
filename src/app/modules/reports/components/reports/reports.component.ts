@@ -175,7 +175,7 @@ export class ReportsComponent implements OnInit {
 
   onSubmitForm(form: FormGroup) {
     console.log('[component] - reports - onSubmitForm');
-    const params = {... form.value};
+    const params = {...form.value};
     switch (params.dateType) {
       case 'day':
         params.currentDate = `${params.currentDate.year}-${params.currentDate.month < 10 ? '0' + params.currentDate.month : params.currentDate.month}-${params.currentDate.day < 10 ? '0' + params.currentDate.day : params.currentDate.day}`;

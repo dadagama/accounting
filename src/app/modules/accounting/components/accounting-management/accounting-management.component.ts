@@ -9,10 +9,7 @@ import { RecordService } from 'src/app/services/record.service';
 // Components
 import { AppModalConfirmComponent } from 'src/app/components/app-modal-confirm/app-modal-confirm.component';
 // Interfaces
-import { Product } from 'src/app/interfaces/product';
-import { Record } from 'src/app/interfaces/record';
-import { Seller } from 'src/app/interfaces/seller';
-import { FormattedRecord } from 'src/app/interfaces/formattedRecord';
+import { FormattedRecord, Product, Record, Seller } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-accounting-management',
@@ -163,7 +160,7 @@ export class AccountingManagementComponent implements OnInit {
       sellerName,
       description: record.description,
       productImage
-    } as FormattedRecord;
+    };
   }
 
   trackByIdFn(index: number, el: Record | Seller | Product) {

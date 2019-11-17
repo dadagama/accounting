@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { Product } from '../interfaces/product';
 
 @Injectable({
   providedIn: 'root'

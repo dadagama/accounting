@@ -1,5 +1,5 @@
 {
-  "extends": "tslint:recommended",
+  "extends": "tslint:latest",
   "rulesDirectory": [
     "codelyzer"
   ],
@@ -60,6 +60,15 @@
       true,
       "single"
     ],
+    "no-submodule-imports": [
+      true,
+      "zone.js",
+      "@angular",
+      "src/app/services",
+      "src/app/interfaces",
+      "src/app/components"
+    ],
+    "no-implicit-dependencies": [true, ["src", "protractor"]],
     "trailing-comma": false,
     "no-output-on-prefix": true,
     "use-input-property-decorator": true,

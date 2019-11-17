@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { v1 as uuidv1 } from 'uuid';
 import { APIService } from './api.service';
 import { Seller } from '../interfaces/seller';
 import { Observable } from 'rxjs';

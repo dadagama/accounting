@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { APIService } from './api.service';
 import { Record } from '../interfaces/record';
-import { v1 as uuidv1 } from 'uuid';
 import { Observable } from 'rxjs';
 import { PutResponse, PostResponse, GetAllResponse, GetResponse } from '../interfaces/APIResponses';
 
