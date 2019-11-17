@@ -1,4 +1,4 @@
-.product-button:hover {
+.product-button:hover:not([disabled]) {
     .product-image {
         filter: invert(100%); 
     }

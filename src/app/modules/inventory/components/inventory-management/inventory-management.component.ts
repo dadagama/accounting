@@ -4,13 +4,8 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 // Services
 import { ProductService } from 'src/app/services/product.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
-// Ag Grid
-// import { DeleteButtonRendererComponent } from 'src/app/components/delete-button-renderer/delete-button-renderer.component';
-import { GridOptions } from 'ag-grid-community';
 // Interfaces
 import { Product } from 'src/app/interfaces/product';
-
-import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-inventory-management',
@@ -19,79 +14,9 @@ import { saveAs } from 'file-saver';
   encapsulation: ViewEncapsulation.Emulated
 })
 export class InventoryManagementComponent implements OnInit {
-  showForm: boolean;
   form: FormGroup;
   selectedImageFile: string;
-  gridOptions: GridOptions = {
-    rowHeight: 36,
-    stopEditingWhenGridLosesFocus: true,
-    context: {
-      componentParent: this,
-      onDeleteRowCallback: 'onRemoveProduct'
-    },
-    // frameworkComponents: {
-    //   deleteButtonRenderer: DeleteButtonRendererComponent
-    // },
-    columnDefs: [
-      { headerName: 'Id', field: 'id', editable: false, hide: true },
-      {
-        headerName: 'Imagen', width: 70,
-        field: 'image', cellRenderer: (params) => {
-          if (params.data.image !== undefined) {
-            return '<img src="assets/products/' + params.data.image + '" class="productImage"/>';
-          }
-          return this.utilitiesService.ICON_UNKNOWN;
-        },
-        editable: true
-      },
-      { headerName: 'Nombre', field: 'name', filter: 'agTextColumnFilter', editable: true },
-      {
-        headerName: 'Es Visible', width: 60,
-        field: 'isVisible',
-        // cellRenderer: params =>  {console.log('rederer', params); return params.data.isVisible === true ? this.utilitiesService.ICON_YES : this.utilitiesService.ICON_NO; },
-        cellEditor: 'agSelectCellEditor',
-        cellEditorParams: { values: ['Si', 'No'] },
-        valueParser: (params) => {console.log('parser', params); return params.newValue === 'Si'; },
-        editable: true
-      },
-      {
-        headerName: 'Necesita Vendedor', width: 80,
-        field: 'needsSeller',
-        cellRenderer: params => params.data.needsSeller === true ? this.utilitiesService.ICON_YES : this.utilitiesService.ICON_NO,
-        cellEditor: 'agSelectCellEditor',
-        cellEditorParams: { values: ['true', 'false'] },
-        editable: true
-      },
-      {
-        headerName: 'Necesita Inventario', width: 80,
-        field: 'needsInventory',
-        cellRenderer: params => params.data.needsInventory === true ? this.utilitiesService.ICON_YES : this.utilitiesService.ICON_NO,
-        cellEditor: 'agSelectCellEditor',
-        cellEditorParams: { values: ['true', 'false'] },
-        editable: true
-      },
-      {
-        headerName: 'Cantidad', width: 60, editable: true,
-        field: 'quantity', filter: 'agNumberColumnFilter'
-      },
-      { headerName: 'Etiquetas', field: 'tags', editable: true, filter: 'agTextColumnFilter' },
-    ],
-    onGridReady: () => {
-      console.log('[component] - inventory - onGridReady');
-      this.gridOptions.api.setRowData(this.productService.getAllProducts());
-      this.gridOptions.api.sizeColumnsToFit();
-    },
-    onCellValueChanged: (event) => {
-      console.log('[component] - inventory - cell edited', event);
-      if (event.oldValue === event.newValue) {
-        return;
-      }
-      const product: Product = event.data;
-      this.productService.updateProduct(product);
-    }
-  };
-
-
+  products: Product[];
   constructor(
     private productService: ProductService,
     private utilitiesService: UtilitiesService) {
@@ -101,6 +26,9 @@ export class InventoryManagementComponent implements OnInit {
 
   ngOnInit() {
     console.log('[component] - inventory - ngOnInit');
+    this.productService.getAllProducts().subscribe(resp => {
+      this.products = resp.data;
+    });
   }
 
   createInitialForm() {
@@ -110,8 +38,8 @@ export class InventoryManagementComponent implements OnInit {
       isVisible: new FormControl('true', [Validators.required]),
       name: new FormControl(null, [Validators.required]),
       needsInventory: new FormControl('false', [Validators.required]),
-      needsSeller: new FormControl('false', [Validators.required]),
-      tags: new FormControl(null, [Validators.required])
+      tags: new FormControl(null),
+      selectedProductId: new FormControl(null),
     });
   }
 
@@ -133,40 +61,63 @@ export class InventoryManagementComponent implements OnInit {
   onSubmitForm() {
     console.log('[component] - inventory - onSubmitForm', this.form);
     if (this.form.invalid) {
-      this.utilitiesService.markFormGroupTouched(this.form);
+      return this.utilitiesService.markFormGroupTouched(this.form);
+    }
+    const product: Product = {
+      image: this.form.controls.image.value,
+      isVisible: this.form.controls.isVisible.value === 'true' ? true : false,
+      name: this.form.controls.name.value,
+      needsInventory: this.form.controls.needsInventory.value === 'true' ? true : false,
+      tags: JSON.stringify(this.form.controls.tags.value.split(','))
+    };
+    if (product.needsInventory) {
+      product.quantity = this.form.controls.quantity.value;
+    }
+    if (this.form.controls.selectedProductId.value !== null) {
+      product.uuid = this.form.controls.selectedProductId.value;
+      this.productService.updateProduct(product).subscribe(resp => {
+        // update records array
+        const productIndex = this.products.findIndex((p => p.uuid === resp.data.uuid));
+        this.products[productIndex] = resp.data;
+        this.reset();
+      });
     } else {
-      this.saveProduct(this.form.value);
+      this.productService.addProduct(product).subscribe(resp => {
+        this.products.push(resp.data);
+        this.reset();
+      });
     }
   }
 
   saveProduct(product: Product) {
     console.log('[component] - inventory - saveProduct', product);
-    this.productService.addProduct(product);
-    this.gridOptions.api.addItems([product]);
-    this.form.reset();
-    this.showForm = false;
   }
 
-  onSaveInventory() {
-    console.log('[component] - inventory - onSaveInventory', event);
-    const blob = new Blob([JSON.stringify(this.productService.getAllProducts())],
-    {type: 'text/plain;charset=utf-8'});
-    saveAs(blob, 'inventario.json');
+  trackByIdFn(index: number, el: Product) {
+    return el && el.uuid ? el.uuid : undefined;
   }
 
-  onLoadInventory(event) {
-    console.log('[component] - inventory - onLoadInventory', event);
-    const input = event.target;
-
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      const products: Product[] = JSON.parse(reader.result as string);
-      this.productService.removeAllProducts();
-      products.forEach((product: Product) => this.productService.addProduct(product));
-      this.gridOptions.api.setRowData(products);
-      this.gridOptions.api.sizeColumnsToFit();
-    };
-    reader.readAsText(input.files[0]);
-
+  setSelectedProduct(product: Product) {
+    console.log('[component] - inventory - setSelectedRecord', product);
+    this.form.controls.selectedProductId.setValue(product.uuid);
+    this.form.controls.image.setValue(product.image);
+    this.form.controls.name.setValue(product.name);
+    this.form.controls.isVisible.setValue(product.isVisible ? 'true' : 'false');
+    this.form.controls.needsInventory.setValue(product.needsInventory ? 'true' : 'false');
+    this.onNeedsInventory(new Event('selected'));
+    if (this.form.controls.needsInventory.value === 'true') {
+      this.form.controls.quantity.setValue(product.quantity);
+    }
+    this.form.controls.tags.setValue(JSON.parse(product.tags).join(','));
   }
+  reset() {
+    this.form.reset({
+      image: null,
+      isVisible: 'true',
+      name: null,
+      needsInventory: 'false',
+      tags: null
+    });
+  }
+
 }

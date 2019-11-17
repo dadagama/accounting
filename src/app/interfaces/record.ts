@@ -1,8 +1,10 @@
 export interface Record {
     description?: string;
-    id?: string;
+    isVisible?: boolean;
+    price: number;
     productId: string;
     sellerId?: string;
-    ticketId?: string;
+    // ticketId?: string;
     timestamp?: number;
+    uuid?: string;
 }

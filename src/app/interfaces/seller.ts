@@ -1,5 +1,5 @@
 export interface Seller {
-    id: string;
-    isVisible: boolean | string;
+    isVisible: boolean;
     name: string;
+    uuid?: string;
 }

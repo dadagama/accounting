@@ -1,27 +1,19 @@
 <div class="row">
-  <div class="col-md-8">
-    <ag-grid-angular style="width: 100%; height: 500px" class="ag-theme-balham" [gridOptions]="gridOptions">
-    </ag-grid-angular>
-  </div>
-
-  <div class="col-md-4">
+  <div class="col-md-3">
     <div class="card mb-3">
-      <div class="card-body" *ngIf="!showForm">
-          <div class="card-text text-center">
-            <button class="btn btn-primary" (click)="showForm = true;"><i class="fa fa-plus mr-2"></i>Agregar Nuevo</button>
-          </div>
-      </div>
-      <div class="card-body" *ngIf="showForm">
+      <div class="card-body">
         <h5 class="card-title">Agregar Producto</h5>
         <div class="card-text">
           <form [formGroup]="form" (ngSubmit)="onSubmitForm()" novalidate>
             <div class="form-group">
               <label for="image">Imagen</label>
-              <input type="text" class="form-control" id="image" formControlName="image" placeholder="Ingrese el nombre de la imagen"/>
+              <input type="text" class="form-control" id="image" formControlName="image"
+                placeholder="Ingrese el nombre de la imagen" />
             </div>
             <div class="form-group mandatory-field">
               <label for="name">Nombre</label>
-              <input type="text" class="form-control" id="name" formControlName="name" placeholder="Ingrese el nombre del producto"/>
+              <input type="text" class="form-control" id="name" formControlName="name"
+                placeholder="Ingrese el nombre del producto" />
             </div>
             <div class="form-group mandatory-field">
               <label for="isVisible">Es Visible en contabilidad</label>
@@ -31,40 +23,85 @@
               </select>
             </div>
             <div class="form-group mandatory-field">
-              <label for="needsSeller">Necesita Vendedor</label>
-              <select class="form-control" id="needsSeller" formControlName="needsSeller">
-                <option value="false">No</option>
-                <option value="true">Si</option>
-              </select>
-            </div>
-            <div class="form-group mandatory-field">
-              <label for="needsInventory">Necesita Inventario</label>
-              <select class="form-control" id="needsInventory" formControlName="needsInventory" (change)="onNeedsInventory($event)">
+              <label for="needsInventory">Tiene Inventario</label>
+              <select class="form-control" id="needsInventory" formControlName="needsInventory"
+                (change)="onNeedsInventory($event)">
                 <option value="false">No</option>
                 <option value="true">Si</option>
               </select>
             </div>
             <div class="form-group mandatory-field" *ngIf="form.controls.needsInventory.value === 'true'">
               <label for="quantity">Cantidad</label>
-              <input type="number" class="form-control" id="quantity" formControlName="quantity" placeholder="Ingrese la cantidad"/>
+              <input type="number" class="form-control" id="quantity" formControlName="quantity"
+                placeholder="Ingrese la cantidad" />
             </div>
-            <div class="form-group mandatory-field">
-              <label for="name">Etiquetas</label>
-              <input type="text" class="form-control" id="tags" formControlName="tags" placeholder="Ingrese las etiquetas separadas por comas"/>
+            <div class="form-group">
+              <label for="tags">Etiquetas</label>
+              <input type="text" class="form-control" id="tags" formControlName="tags"
+                placeholder="Ingrese las etiquetas separadas por comas" />
             </div>
-            <div class="form-group text-center">
-              <button type="submit" class="btn btn-primary"><i class="fa fa-plus mr-2"></i>Agregar</button>
+            <div class="form-group">
+              <button type="submit" class="btn mr-3" [disabled]="form.invalid"
+                [ngClass]="{'btn-primary': form.valid && !form.controls.selectedProductId.value, 'btn-success': form.valid && form.controls.selectedProductId.value, 'btn-dark': form.invalid}">
+                <i class="fa mr-3" [ngClass]="{'fa-plus': !form.controls.selectedProductId.value}"></i>
+                {{form.controls.selectedProductId.value ? 'Actualizar' : 'Agregar'}}
+              </button>
+              <button *ngIf="form.valid" class="btn btn-warning" (click)="reset()"><i
+                  class="fa fa-times mr-3"></i>Cancelar</button>
             </div>
           </form>
         </div>
       </div>
     </div>
   </div>
-</div>
-<div class="row mt-2">
-  <div class="col-md-12">
-    <button class="btn btn-info mr-2" (click)="loadInventoryFile.click()"><i class="fa fa-folder-open mr-2"></i>Cargar Inventario</button>
-    <input #loadInventoryFile type="file" style="display:none" class="custom-file-input" (change)="onLoadInventory($event)">
-    <button class="btn btn-info" (click)="onSaveInventory()"><i class="fa fa-save mr-2"></i>Guardar Cambios</button>
+  <div class="col-md-9">
+    <table class="table table-striped table-hover table-compact">
+      <thead class="thead-dark">
+        <tr>
+          <th>Imagen</th>
+          <th>Nombre</th>
+          <th>Es Visible</th>
+          <th>Necesita Inventario</th>
+          <th>Cantidad</th>
+          <th>Etiquetas</th>
+          <th style="width: 80px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products; trackBy: trackByIdFn"
+          [ngClass]="{'bg-success': product.uuid === form.controls.selectedProductId.value}">
+          <td>
+            <i class="fa fa-question-circle fa-2x fa-fw" *ngIf="product.image === ''"></i>
+            <img *ngIf="product.image !== ''" [src]="'assets/products/' + product.image" class="productImage"
+              [alt]="product.name" />
+          </td>
+          <td>{{product.name}}</td>
+          <td>
+            <span *ngIf="product.isVisible">
+              <i class="fa fa-fw fa-check text-primary"></i>
+            </span>
+            <span *ngIf="!product.isVisible">
+              <i class="fa fa-fw fa-times text-danger"></i>
+            </span>
+          </td>
+          <td>
+            <span *ngIf="product.needsInventory">
+              <i class="fa fa-fw fa-check text-primary"></i>
+            </span>
+            <span *ngIf="!product.needsInventory">
+              <i class="fa fa-fw fa-times text-danger"></i>
+            </span>
+          </td>
+          <td [ngClass]="{'text-danger': product.quantity === 0}"><h4>{{product.quantity}}</h4></td>
+          <td>{{product.tags}}</td>
+          <td>
+            <button type="button" class="btn btn-light mr-3" (click)="setSelectedProduct(product)">
+              <i class="fa fa-edit"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot></tfoot>
+    </table>
   </div>
 </div>

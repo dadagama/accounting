@@ -8,9 +8,9 @@ describe('AppModalConfirmComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AppModalConfirmComponent ]
+      declarations: [AppModalConfirmComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

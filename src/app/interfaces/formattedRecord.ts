@@ -1,12 +1,12 @@
 export interface FormattedRecord {
     date: string;
     description?: string;
-    id?: string;
-    productIid?: string;
     productImage?: string;
     productName: string;
+    productId?: string;
     sellerId?: string;
     sellerName?: string;
     selected?: boolean;
-    ticketId?: string;
+    // ticketId?: string;
+    uuid?: string;
 }

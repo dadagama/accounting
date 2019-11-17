@@ -1,56 +1,38 @@
 import { Injectable } from '@angular/core';
-import { StoreService } from './store.service';
+import { Observable } from 'rxjs';
+import { APIService } from './api.service';
 import { Product } from '../interfaces/product';
 import { v1 as uuidv1 } from 'uuid';
+import { PutResponse, PostResponse, GetAllResponse, GetResponse } from '../interfaces/APIResponses';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
 
-  constructor(private storeService: StoreService) {
+  constructor(private apiService: APIService) {
     console.log('[service] - product - constructor');
   }
-  addProduct(product: Product): boolean {
+  addProduct(product: Product): Observable<PostResponse> {
     console.log('[service] - product - addProduct');
-    product = this.sanitizeProduct(product);
-    if (product.id === undefined) {
-      product.id = uuidv1();
-    }
-    return this.storeService.saveProduct(product);
+    return this.apiService.save(product, 'products');
   }
-  updateProduct(product: Product): boolean {
+  updateProduct(product: Product): Observable<PutResponse> {
     console.log('[service] - product - updateProduct');
-    product = this.sanitizeProduct(product);
-    return this.storeService.updateProduct(product);
+    return this.apiService.update(product, 'products');
   }
-  removeProduct(product: Product): boolean {
+  removeProduct(product: Product): Observable<PutResponse> {
     console.log('[service] - product - removeProduct');
-    return this.storeService.removeProduct(product);
+    return this.apiService.remove(product.uuid, 'products');
   }
-  getAllProducts(): Product[] {
+  getAllProducts(): Observable<GetAllResponse> {
     console.log('[service] - product - getAllProducts');
-    return this.storeService.getAllProducts();
+    return this.apiService.getAll('products');
   }
-  removeAllProducts() {
-    return this.storeService.removeAllProducts();
+  getProductById(id: string): Observable<GetResponse> {
+    return this.apiService.get(id, 'products');
   }
-  getProductById(id: string) {
-    return this.storeService.getProductById(id);
-  }
-  private sanitizeProduct(product: Product) {
-    if (typeof product.tags === 'string') {
-      product.tags = product.tags.split(',');
-    }
-    if (typeof product.needsInventory === 'string') {
-      product.needsInventory = product.needsInventory === 'true';
-    }
-    if (typeof product.needsSeller === 'string') {
-      product.needsSeller = product.needsSeller === 'true';
-    }
-    if (typeof product.isVisible === 'string') {
-      product.isVisible = product.isVisible === 'true';
-    }
-    return product;
+  decreaseInventory(uuid: string): Observable<PutResponse> {
+    return this.apiService.decreaseInventory(uuid);
   }
 }

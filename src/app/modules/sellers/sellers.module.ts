@@ -6,10 +6,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // Extra Modules
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 // Components
-import { InventoryManagementComponent } from './components/inventory-management/inventory-management.component';
+import { SellersManagementComponent } from './components/sellers-management/sellers-management.component';
 
 @NgModule({
-  declarations: [InventoryManagementComponent],
+  declarations: [SellersManagementComponent],
   entryComponents: [],
   imports: [
     CommonModule,
@@ -18,6 +18,6 @@ import { InventoryManagementComponent } from './components/inventory-management/
     FormsModule,
     ReactiveFormsModule,
   ],
-  exports: [InventoryManagementComponent]
+  exports: [SellersManagementComponent]
 })
-export class InventoryModule { }
+export class SellersModule { }

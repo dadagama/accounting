@@ -1,0 +1,65 @@
+<div class="row">
+  <div class="col-md-3">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Agregar Vendedor</h5>
+        <div class="card-text">
+          <form [formGroup]="form" (ngSubmit)="onSubmitForm()" novalidate>
+            <div class="form-group mandatory-field">
+              <label for="name">Nombre</label>
+              <input type="text" class="form-control" id="name" formControlName="name"
+                placeholder="Ingrese el nombre del vendedor" />
+            </div>
+            <div class="form-group mandatory-field">
+              <label for="isVisible">Es Visible en contabilidad</label>
+              <select class="form-control" id="isVisible" formControlName="isVisible">
+                <option value="false">No</option>
+                <option value="true">Si</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn mr-3" [disabled]="form.invalid"
+                [ngClass]="{'btn-primary': form.valid && !form.controls.selectedSellerId.value, 'btn-success': form.valid && form.controls.selectedSellerId.value, 'btn-dark': form.invalid}">
+                <i class="fa mr-3" [ngClass]="{'fa-plus': !form.controls.selectedSellerId.value}"></i>
+                {{form.controls.selectedSellerId.value ? 'Actualizar' : 'Agregar'}}
+              </button>
+              <button *ngIf="form.valid" class="btn btn-warning" (click)="reset()"><i
+                  class="fa fa-times mr-3"></i>Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-9">
+    <table class="table table-striped table-hover table-compact">
+      <thead class="thead-dark">
+        <tr>
+          <th>Nombre</th>
+          <th>Es Visible</th>
+          <th style="width: 80px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let seller of sellers; trackBy: trackByIdFn"
+          [ngClass]="{'bg-success': seller.uuid === form.controls.selectedSellerId.value}">
+          <td>{{seller.name}}</td>
+          <td>
+            <span *ngIf="seller.isVisible">
+              <i class="fa fa-fw fa-check text-primary"></i>
+            </span>
+            <span *ngIf="!seller.isVisible">
+              <i class="fa fa-fw fa-times text-danger"></i>
+            </span>
+          </td>
+          <td>
+            <button type="button" class="btn btn-light mr-3" (click)="setSelectedSeller(seller)">
+              <i class="fa fa-edit"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot></tfoot>
+    </table>
+  </div>
+</div>

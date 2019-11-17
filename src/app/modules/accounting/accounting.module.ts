@@ -3,9 +3,13 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 // Extra Modules
-import { AgGridModule } from 'ag-grid-angular';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+// Services
+import { ProductService } from 'src/app/services/product.service';
+import { SellerService } from 'src/app/services/seller.service';
+import { RecordService } from 'src/app/services/record.service';
 // Components
 import { AccountingManagementComponent } from './components/accounting-management/accounting-management.component';
 import { AppModalConfirmComponent } from 'src/app/components/app-modal-confirm/app-modal-confirm.component';
@@ -18,13 +22,14 @@ import { SharedModule } from '../shared/shared.module';
     CommonModule,
     RouterModule,
     NgbModule,
-    AgGridModule.withComponents([]),
     SharedModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule
   ],
-  entryComponents:[
+  entryComponents: [
     AppModalConfirmComponent
   ],
-  exports: [AccountingManagementComponent]
+  exports: [AccountingManagementComponent],
+  providers: [ProductService, SellerService, RecordService]
 })
 export class AccountingModule { }
