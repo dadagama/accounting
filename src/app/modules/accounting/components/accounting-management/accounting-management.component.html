@@ -3,28 +3,42 @@
     <form [formGroup]="form" (ngSubmit)="onSubmitForm(form)" novalidate>
       <div class="card mb-3">
         <div class="card-body">
+          <h5 class="card-title">Fecha</h5>
+          <div class="card-text"  >
+            <div class="form-group">
+              <div class="input-group" >
+                <div class="input-group-prepend">
+                  <span class="input-group-text" [ngClass]="{'bg-warning text-white': !isCurrentDate}"><i class="fa fa-fw fa-calendar-alt"></i></span>
+                </div>
+                <input class="form-control" placeholder="yyyy-mm-dd" name="dp" formControlName="currentDate" [ngClass]="{'bg-warning text-white': !isCurrentDate}"
+                  (click)="d.toggle()" ngbDatepicker #d="ngbDatepicker" (ngModelChange)="onDateSelection($event)" />
+              </div>
+            </div>
+          </div>
           <h5 class="card-title">Producto</h5>
           <div class="card-text">
             <div class="row">
-              <div class="col-md-12 d-flex align-content-start flex-wrap">
-                <button type="button" *ngFor="let product of visibleProducts; trackBy: trackByIdFn" placement="top"
+              <div class="col-md-12 d-flex align-content-start flex-wrap justify-content-start">
+                <button type="button" *ngFor="let product of visibleProducts; trackBy: trackByIdQuantityFn" placement="top"
                   ngbTooltip="{{product.name}}" class="btn mr-3 mb-3 product-button"
                   [disabled]="product.uuid !== form.controls.selectedProductId.value && product.needsInventory && product.quantity === 0"
                   [ngClass]="{'btn-primary': product.uuid === form.controls.selectedProductId.value && !form.controls.selectedRecordId.value,
                               'btn-success': product.uuid === form.controls.selectedProductId.value && form.controls.selectedRecordId.value,
                               'btn-outline-secondary': product.uuid !== form.controls.selectedProductId.value,
                               'btn-outline-danger': product.uuid !== form.controls.selectedProductId.value && product.needsInventory && product.quantity === 0
-                            }"
-                  (click)="setSelectedProduct(product)">
+                            }" (click)="setSelectedProduct(product)">
                   <img *ngIf="product.image !== ''" [src]="'assets/products/' + product.image"
                     class="product-image mx-auto d-block" />
-                  <span class="product-name mx-auto d-block">{{product.name}}<span *ngIf="product.uuid !== form.controls.selectedProductId.value && product.needsInventory && product.quantity === 0"><br><i class="fa fa-exclamation-triangle fa-fw"></i> Inventario</span></span>
+                  <span class="product-name mx-auto d-block">
+                    <i class="fa fa-exclamation-triangle fa-fw" *ngIf="product.needsInventory && product.quantity === 0"></i> 
+                    {{product.name}}
+                  </span>
                 </button>
               </div>
             </div>
           </div>
           <h5 class="card-title">Responsable</h5>
-          <div class="card-text d-flex align-content-start flex-wrap">
+          <div class="card-text d-flex align-content-start flex-wrap justify-content-start">
             <button type="button" *ngFor="let seller of visibleSellers; trackBy: trackByIdFn" placement="top"
               ngbTooltip="{{seller.name}}" class="btn mr-3 mb-3 seller-button"
               [ngClass]="{'btn-primary': seller.uuid === form.controls.selectedSellerId.value && !form.controls.selectedRecordId.value, 'btn-success': seller.uuid === form.controls.selectedSellerId.value && form.controls.selectedRecordId.value, 'btn-outline-secondary': seller.uuid !== form.controls.selectedSellerId.value}"
@@ -35,13 +49,23 @@
           </div>
           <h5 class="card-title">Precio</h5>
           <div class="card-text">
-            <input type="number" class="form-control" id="price" formControlName="price"
-              placeholder="Ingrese el precio del producto" />
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fa fa-fw fa-dollar-sign"></i></span>
+              </div>
+              <input type="number" class="form-control" id="price" formControlName="price"
+                placeholder="Ingrese el precio del producto" />
+            </div>
           </div>
           <h5 class="card-title mt-3">Descripción</h5>
           <div class="card-text">
-            <input type="text" class="form-control" id="description" formControlName="description"
-              placeholder="Ingrese una descripción" />
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fa fa-fw fa-comment-dots"></i></span>
+              </div>
+              <input type="text" class="form-control" id="description" formControlName="description"
+                placeholder="Ingrese una descripción" />
+            </div>
           </div>
           <div class="card-text mt-3">
             <button type="submit" class="btn mr-3" [disabled]="form.invalid"
@@ -49,7 +73,7 @@
               <i class="fa mr-3" [ngClass]="{'fa-plus': !form.controls.selectedRecordId.value}"></i>
               {{form.controls.selectedRecordId.value ? 'Actualizar' : 'Agregar'}}
             </button>
-            <button *ngIf="form.valid" type="reset" class="btn btn-warning"><i
+            <button *ngIf="form.valid" (click)="resetForm" class="btn btn-warning"><i
                 class="fa fa-times mr-3"></i>Cancelar</button>
           </div>
         </div>
@@ -60,7 +84,8 @@
     <table class="table table-striped table-hover table-compact">
       <thead class="thead-dark">
         <tr>
-          <th style="min-width: 100px;">Hora</th>
+          <th style="width: 100px;"><input type="checkbox" class="form-control form-control-sm" (change)="toggleAll($event)"/></th>
+          <th style="width: 100px;">Hora</th>
           <th style="min-width: 180px;">Producto</th>
           <th>Responsable</th>
           <th>Precio</th>
@@ -71,6 +96,7 @@
       <tbody>
         <tr *ngFor="let record of formattedRecords; trackBy: trackByIdFn"
           [ngClass]="{'bg-success': record.uuid === form.controls.selectedRecordId.value}">
+          <td><input type="checkbox" [(ngModel)]="record.checked" class="form-control form-control-sm" (change)="updateSum($event, record)"/></td>
           <td>{{record.date}}</td>
           <td>
             <i class="fa fa-question-circle fa-2x fa-fw" *ngIf="record.productImage === ''"></i>

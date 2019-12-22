@@ -32,7 +32,7 @@ export class ProductService {
   getProductById(id: string): Observable<GetResponse> {
     return this.apiService.get(id, 'products');
   }
-  decreaseInventory(uuid: string): Observable<PutResponse> {
-    return this.apiService.decreaseInventory(uuid);
+  manageInventory(uuid: string, action: 'increase' | 'decrease'): Observable<PutResponse> {
+    return this.apiService.manageInventory(uuid, action);
   }
 }

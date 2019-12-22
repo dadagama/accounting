@@ -51,7 +51,12 @@ export class APIService {
     }).join('&');
     return this.http.get<GetResponse>(`${this.BASE_URL}/report?${queryString}`);
   }
-  decreaseInventory(uuid: string) {
-    return this.http.put<PutResponse>(`${this.BASE_URL}/products/${uuid}/decreaseInventory`, {});
+  manageInventory(uuid: string, action: 'increase' | 'decrease') {
+    console.log('[service] - api - manageInventory', uuid, action);
+    return this.http.put<PutResponse>(`${this.BASE_URL}/products/${uuid}/${action}Inventory`, {});
+  }
+  getRecordsByDate(date: string): Observable<GetResponse> {
+    console.log('[service] - api - getRecordsByDate', date);
+    return this.http.get<GetResponse>(`${this.BASE_URL}/records/byDate/${date}`);
   }
 }

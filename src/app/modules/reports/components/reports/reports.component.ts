@@ -1,9 +1,10 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
 import { Label } from 'ng2-charts';
-import { NgbDate, NgbCalendar, NgbDatepickerI18n, NgbDateStruct, NgbDateAdapter, NgbDateNativeAdapter } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDate, NgbCalendar, NgbDatepickerI18n, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { ReportService } from 'src/app/services/report.service';
+import { DecimalPipe } from '@angular/common';
 
 const I18N_VALUES = {
   es: {
@@ -49,7 +50,7 @@ export class CustomDatepickerI18n extends NgbDatepickerI18n {
   styleUrls: ['./reports.component.scss'],
   providers: [
     I18n,
-    {provide: NgbDatepickerI18n, useClass: CustomDatepickerI18n}]
+    { provide: NgbDatepickerI18n, useClass: CustomDatepickerI18n }]
 })
 export class ReportsComponent implements OnInit {
 
@@ -60,7 +61,19 @@ export class ReportsComponent implements OnInit {
   public barChartOptions: ChartOptions = {
     responsive: true,
     // We use these empty structures as placeholders for dynamic theming.
-    scales: { xAxes: [{}], yAxes: [{}] },
+    scales: {
+      xAxes: [{ }],
+      yAxes: [{
+        ticks: {
+          min: 0,
+          // callback(value, index, values) {
+          //   // return formatNumber(value);
+          //   debugger;
+          //   return this.decimalPipe.transform(value, '1.0-3');
+          // }
+        }
+       }],
+    },
     plugins: {
       datalabels: {
         anchor: 'end',
@@ -68,15 +81,11 @@ export class ReportsComponent implements OnInit {
       }
     }
   };
-  public barChartLabels: Label[] = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
   public barChartType: ChartType = 'bar';
   public barChartLegend = true;
   public barChartPlugins = [];
-
-  public barChartData: ChartDataSets[] = [
-    { data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A' },
-    { data: [28, 48, 40, 19, 86, 27, 90], label: 'Series B' }
-  ];
+  public barChartLabels: Label[] = [];
+  public barChartData: ChartDataSets[] = [];
 
   //////////// BAR CHART
 
@@ -84,26 +93,31 @@ export class ReportsComponent implements OnInit {
 
   hoveredDate: NgbDate;
   dateTypes = [
-    {id: 'day', name: 'Día'},
-    {id: 'range', name: 'Rango de fechas'}
+    { id: 'day', name: 'Día' },
+    { id: 'range', name: 'Rango de fechas' }
   ];
   reports = [
-    {id: 'EarningsBySeller', name: 'Ventas por Vendedor'},
-    {id: 'EarningsByProduct', name: 'Ventas por Producto'},
-    {id: 'EarningsByTag', name: 'Ventas por Etiqueta'}
+    { id: 'EarningsBySeller', name: 'Ingresos por Vendedor' },
+    { id: 'EarningsByProduct', name: 'Ingresos por Producto' },
+    // {id: 'EarningsByTag', name: 'Ingresos por Etiqueta'},
+    { id: 'CountByProduct', name: 'Cantidad por Producto' },
   ];
 
   fromDate: NgbDate;
   toDate: NgbDate;
   today: NgbDate;
 
-  constructor(calendar: NgbCalendar, private reportService: ReportService) {
+  constructor(calendar: NgbCalendar, private reportService: ReportService, private decimalPipe: DecimalPipe) {
     this.today = calendar.getToday();
     this.form = this.createInitialForm();
   }
 
+  onDateSelection(date: NgbDate) {
+    console.log('[component] - reports - onDateSelection', date);
+  }
+
   onRangeSelection(date: NgbDate) {
-    console.log(date);
+    console.log('[component] - reports - onRangeSelection', date);
     if (!this.fromDate && !this.toDate) {
       this.fromDate = date;
     } else if (this.fromDate && !this.toDate && date.after(this.fromDate)) {
@@ -147,7 +161,7 @@ export class ReportsComponent implements OnInit {
 
   createInitialForm() {
     console.log('[component] - reports - createInitialForm');
-    const formGroup =  new FormGroup({
+    const formGroup = new FormGroup({
       reportType: new FormControl(null, [Validators.required]),
       dateType: new FormControl('day', [Validators.required])
     });
@@ -175,7 +189,7 @@ export class ReportsComponent implements OnInit {
 
   onSubmitForm(form: FormGroup) {
     console.log('[component] - reports - onSubmitForm');
-    const params = {...form.value};
+    const params = { ...form.value };
     switch (params.dateType) {
       case 'day':
         params.currentDate = `${params.currentDate.year}-${params.currentDate.month < 10 ? '0' + params.currentDate.month : params.currentDate.month}-${params.currentDate.day < 10 ? '0' + params.currentDate.day : params.currentDate.day}`;
@@ -186,7 +200,33 @@ export class ReportsComponent implements OnInit {
         break;
     }
     this.reportService.getReportData(params).subscribe(resp => {
-      console.log(resp);
+      this.barChartData = [];
+      this.barChartLabels = [];
+      const days = [];
+      switch (params.dateType) {
+        case 'day':
+          resp.data.forEach(r => {
+            this.barChartData.push({ data: [r.value], label: r.label });
+            days.push(r.date);
+          });
+          this.barChartLabels = [...new Set(days)];
+          break;
+        case 'range':
+          const data: object = {};
+          resp.data.forEach(r => {
+            if (!data.hasOwnProperty(r.label)) {
+              data[r.label] = [];
+            }
+            data[r.label].push(r.value);
+            days.push(r.date);
+          });
+          Object.entries(data).forEach(
+            ([key, value]) => {
+              this.barChartData.push({ data: value, label: key });
+            });
+          this.barChartLabels = [...new Set(days)];
+          break;
+      }
     });
   }
 

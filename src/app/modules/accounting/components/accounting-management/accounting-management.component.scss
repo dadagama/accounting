@@ -9,3 +9,10 @@
         font-size: 0.7em;
     }
 }
+:host ::ng-deep {
+    .ngb-dp-today {
+        .btn-light {
+            color: red;
+        }
+    }
+}

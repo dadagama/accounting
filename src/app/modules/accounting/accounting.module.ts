@@ -2,7 +2,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 // Extra Modules
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -20,6 +20,7 @@ import { SharedModule } from '../shared/shared.module';
     CommonModule,
     RouterModule,
     NgbModule,
+    FormsModule,
     SharedModule,
     ReactiveFormsModule,
     HttpClientModule

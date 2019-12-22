@@ -29,6 +29,11 @@ export class RecordService {
     return this.apiService.getAll('records');
   }
   getRecordById(id: string): Observable<GetResponse> {
+    console.log('[service] - record - getRecordById');
     return this.apiService.get(id, 'records');
+  }
+  getRecordsByDate(date: string): Observable<GetResponse> {
+    console.log('[service] - record - getRecordsByDate');
+    return this.apiService.getRecordsByDate(date);
   }
 }

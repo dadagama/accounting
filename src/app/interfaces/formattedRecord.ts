@@ -8,6 +8,8 @@ export interface FormattedRecord {
     sellerId?: string;
     sellerName?: string;
     selected?: boolean;
+    needsInventory?: boolean;
+    checked: boolean;
     // ticketId?: string;
     uuid?: string;
 }

@@ -68,7 +68,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let product of products; trackBy: trackByIdFn"
+        <tr *ngFor="let product of products; trackBy: trackProducts"
           [ngClass]="{'bg-success': product.uuid === form.controls.selectedProductId.value}">
           <td>
             <i class="fa fa-question-circle fa-2x fa-fw" *ngIf="product.image === ''"></i>

@@ -10,6 +10,7 @@ import { ReportsModule } from './modules/reports/reports.module';
 import { AboutComponent } from './components/about/about.component';
 import { AppModalConfirmComponent } from './components/app-modal-confirm/app-modal-confirm.component';
 import { SellersModule } from './modules/sellers/sellers.module';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { SellersModule } from './modules/sellers/sellers.module';
     ReportsModule,
     AppRoutingModule,
     HttpClientModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
@@ -33,12 +35,5 @@ export class AppModule { }
 
 
 // TODO:
-// - al actualizar un record, si cambia de producto toca modificar inventario tambien (quitar del nuevo producto y sumar al viejo)
-// - al borrar record, aumentar inventario nuevamente del producto (PUT /product/:product_id/increaseInventory o desde el PUT /record)
-// - deshabilitar producto si no tiene inventario
 // - grafico reporte
-// - calculadora / suma con checkboxes
-// - datepicker para cambiar de dia en la contabilidad
 // - ngb-toast para mensajes de error
-// - modulos de ADMIN con clave
-// - menu colapsable movil

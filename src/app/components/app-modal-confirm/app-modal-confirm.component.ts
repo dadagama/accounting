@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -11,16 +11,19 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
     </button>
   </div>
   <div class="modal-body">
-    <p>Esta seguro de querer <strong class="text-danger">ELIMINAR</strong> este registro?
-    </p>
+    <p innerHTML={{text}}>{{text}}</p>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">
-      <i class="mr-3 fa fa-times"></i>Cancelar</button>
-    <button type="button" class="btn btn-danger" (click)="modal.close('Ok click')"><i class="mr-3 fa fa-trash"></i>Si, Eliminar</button>
+      <span innerHTML={{cancelButtonText}}>{{cancelButtonText}}</span></button>
+    <button type="button" class="btn btn-primary" (click)="modal.close('Ok click')">
+      <span innerHTML={{okButtonText}}>{{okButtonText}}</span></button>
   </div>
   `
 })
 export class AppModalConfirmComponent {
+  @Input() text: string;
+  @Input() cancelButtonText ? = `<i class="fa fa-times fa-fw mr-3"></i>No`;
+  @Input() okButtonText ? = `<i class="fa fa-check fa-fw mr-3"></i>Si`;
   constructor(public modal: NgbActiveModal) { }
 }

@@ -1,30 +1,48 @@
 <nav class="navbar fixed-top navbar-expand-lg navbar-dark mb-3 main-app-nav">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03"
-        aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#menu" (click)="toggleMenu()"
+        aria-controls="menu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <a class="navbar-brand" href="#">
         <img [src]="'assets/logo.png'" width="50" height="50" alt="Rafael Gomez Tattoo Studio">
     </a>
 
-    <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+    <div class="collapse navbar-collapse" id="menu" [ngClass]="{ 'show': expanded }">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item" [routerLinkActive]="['active']">
-                <a class="nav-link" [routerLink]="['/contabilidad']"><i class="fa fa-th-list mr-2"></i>Contabilidad</a>
+                <a class="nav-link" [routerLink]="['/contabilidad']" (click)="toggleMenu()"><i
+                        class="fa fa-fw fa-th-list mr-2"></i>Contabilidad</a>
+            </li>
+            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="adminMode">
+                <a class="nav-link" [routerLink]="['/reportes']" (click)="toggleMenu()"><i
+                        class="fa fa-fw fa-chart-pie mr-2"></i>Reportes</a>
+            </li>
+            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="adminMode">
+                <a class="nav-link" [routerLink]="['/inventario']" (click)="toggleMenu()"><i
+                        class="fa fa-fw fa-box-open mr-2"></i>Productos</a>
+            </li>
+            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="adminMode">
+                <a class="nav-link" [routerLink]="['/vendedores']" (click)="toggleMenu()"><i
+                        class="fa fa-fw fa-users-cog mr-2"></i>Vendedores</a>
             </li>
             <li class="nav-item" [routerLinkActive]="['active']">
-                <a class="nav-link" [routerLink]="['/reportes']"><i class="fa fa-chart-pie mr-2"></i>Reportes</a>
-            </li>
-            <li class="nav-item" [routerLinkActive]="['active']">
-                <a class="nav-link" [routerLink]="['/inventario']"><i class="fa fa-box-open mr-2"></i>Inventario</a>
-            </li>
-            <li class="nav-item" [routerLinkActive]="['active']">
-                <a class="nav-link" [routerLink]="['/vendedores']"><i class="fa fa-users-cog mr-2"></i>Vendedores</a>
-            </li>
-            <li class="nav-item" [routerLinkActive]="['active']">
-                <a class="nav-link" [routerLink]="['/acerca-de']"><i class="fa fa-info mr-2"></i>Acerca De</a>
+                <a class="nav-link" [routerLink]="['/acerca-de']" (click)="toggleMenu()"><i
+                        class="fa fa-fw fa-info mr-2"></i>Acerca De</a>
             </li>
         </ul>
+        <form class="form-inline admin-form mr-3">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" [ngClass]="{'bg-success text-white': adminMode}"><i class="fa fa-fw fa-key"></i></span>
+                </div>
+                <input type="password" class="form-control" aria-label="adminPass" name="adminPass" [ngClass]="{'bg-success text-white': adminMode}"
+                    [(ngModel)]="adminPass" (change)="toggleAdminMode()"/>
+            </div>
+        </form>
+        <form class="form-inline accumulator-form">
+            <input type="text" class="form-control read-only" readonly aria-label="accumulator" name="accumulator"
+                [ngModel]="accumulator$ | async | currency:'':'$':'1.0-0'" />
+        </form>
     </div>
 </nav>
 

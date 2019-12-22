@@ -52,12 +52,6 @@ export class InventoryManagementComponent implements OnInit {
     }
   }
 
-  onRemoveProduct(product: any) {
-    console.log('[component] - inventory - onRemoveProduct', product);
-    this.productService.removeProduct(product);
-    return true;
-  }
-
   onSubmitForm() {
     console.log('[component] - inventory - onSubmitForm', this.form);
     if (this.form.invalid) {
@@ -68,7 +62,7 @@ export class InventoryManagementComponent implements OnInit {
       isVisible: this.form.controls.isVisible.value === 'true' ? true : false,
       name: this.form.controls.name.value,
       needsInventory: this.form.controls.needsInventory.value === 'true' ? true : false,
-      tags: JSON.stringify(this.form.controls.tags.value.split(','))
+      tags: JSON.stringify(this.form.controls.tags.value ? this.form.controls.tags.value.split(',') : [''])
     };
     if (product.needsInventory) {
       product.quantity = this.form.controls.quantity.value;
@@ -77,7 +71,7 @@ export class InventoryManagementComponent implements OnInit {
       product.uuid = this.form.controls.selectedProductId.value;
       this.productService.updateProduct(product).subscribe(resp => {
         // update records array
-        const productIndex = this.products.findIndex((p => p.uuid === resp.data.uuid));
+        const productIndex = this.products.findIndex(p => p.uuid === product.uuid);
         this.products[productIndex] = resp.data;
         this.reset();
       });
@@ -89,12 +83,9 @@ export class InventoryManagementComponent implements OnInit {
     }
   }
 
-  saveProduct(product: Product) {
-    console.log('[component] - inventory - saveProduct', product);
-  }
-
-  trackByIdFn(index: number, el: Product) {
-    return el && el.uuid ? el.uuid : undefined;
+  trackProducts(index: number, el: Product) {
+    if (!el) { return null; }
+    return el.uuid;
   }
 
   setSelectedProduct(product: Product) {
