@@ -10,30 +10,30 @@ import { PutResponse, PostResponse, GetAllResponse, GetResponse } from '../inter
 export class RecordService {
 
   constructor(private apiService: APIService) {
-    console.log('[service] - record - constructor');
+    // console.log('[service] - record - constructor');
   }
   addRecord(record: Record): Observable<PostResponse> {
-    console.log('[service] - record - addRecord');
+    // console.log('[service] - record - addRecord');
     return this.apiService.save(record, 'records');
   }
   updateRecord(record: Record): Observable<PutResponse> {
-    console.log('[service] - record - updateRecord');
+    // console.log('[service] - record - updateRecord');
     return this.apiService.update(record, 'records');
   }
   removeRecord(record: Record): Observable<PutResponse> {
-    console.log('[service] - record - removeRecord');
+    // console.log('[service] - record - removeRecord');
     return this.apiService.remove(record.uuid, 'records');
   }
   getAllRecords(): Observable<GetAllResponse> {
-    console.log('[service] - record - getAllRecords');
+    // console.log('[service] - record - getAllRecords');
     return this.apiService.getAll('records');
   }
   getRecordById(id: string): Observable<GetResponse> {
-    console.log('[service] - record - getRecordById');
+    // console.log('[service] - record - getRecordById');
     return this.apiService.get(id, 'records');
   }
   getRecordsByDate(date: string): Observable<GetResponse> {
-    console.log('[service] - record - getRecordsByDate');
+    // console.log('[service] - record - getRecordsByDate');
     return this.apiService.getRecordsByDate(date);
   }
 }

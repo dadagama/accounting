@@ -9,11 +9,11 @@ import { APIService } from './api.service';
 export class ReportService {
 
   constructor(protected apiService: APIService) {
-    console.log('[service] - report - constructor');
+    // console.log('[service] - report - constructor');
   }
 
   getReportData(params: { [x: string]: string | number | boolean; }): Observable<GetResponse> {
-    console.log('[service] - report - getReportData');
+    // console.log('[service] - report - getReportData');
     return this.apiService.getReportData(params);
   }
 }

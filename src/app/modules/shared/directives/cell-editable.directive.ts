@@ -10,7 +10,7 @@ export class CellEditableDirective {
   select;
 
   constructor(el: ElementRef, renderer: Renderer2) {
-    console.log('CellEditableDirective - constructor', el);
+    // console.log('CellEditableDirective - constructor', el);
     this.el = el;
     this.renderer = renderer;
     this.select = this.renderer.createElement('select');
@@ -23,7 +23,7 @@ export class CellEditableDirective {
   }
 
   @HostListener('dblclick') onDoubleClick() {
-    console.log('CellEditableDirective - dblclick');
+    // console.log('CellEditableDirective - dblclick');
     this.el.nativeElement.style.backgroundColor = 'green';
     this.renderer.appendChild(this.el.nativeElement, this.select);
   }

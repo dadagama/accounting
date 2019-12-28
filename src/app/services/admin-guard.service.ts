@@ -18,7 +18,7 @@ export class AdminGuardService  implements CanActivate {
   constructor(public router: Router) {}
 
   canActivate(): boolean {
-    console.log('[service] - AdminGuardService - canActivate');
+    // console.log('[service] - AdminGuardService - canActivate');
 
     if (!this.isAdmin) {
       this.router.navigate(['']);

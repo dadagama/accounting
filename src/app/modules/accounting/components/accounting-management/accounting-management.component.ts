@@ -1,5 +1,5 @@
 // Angular
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NgbModal, NgbDate, NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 // Services
@@ -10,7 +10,7 @@ import { RecordService } from 'src/app/services/record.service';
 import { AppModalConfirmComponent } from 'src/app/components/app-modal-confirm/app-modal-confirm.component';
 // Interfaces
 import { FormattedRecord, Product, Record, Seller } from 'src/app/interfaces';
-import { forkJoin, Subject } from 'rxjs';
+import { forkJoin, Subject, Subscription } from 'rxjs';
 import { CommunicationService } from 'src/app/services/communication.service';
 
 @Component({
@@ -28,8 +28,14 @@ export class AccountingManagementComponent implements OnInit {
   visibleSellers: Seller[];
   visibleProducts: Product[];
   accumulator: number;
+  accumulatorExpense: number;
   accumulatorListener: Subject<number>;
+  accumulatorExpenseListener: Subject<number>;
+  sellerListener: Subject<Seller>;
   isCurrentDate: boolean;
+  subs: Subscription;
+  filterSeller: string;
+  selectAllRecordsChecked: boolean;
 
   constructor(
     private productService: ProductService,
@@ -38,12 +44,12 @@ export class AccountingManagementComponent implements OnInit {
     private modalService: NgbModal,
     private communicationService: CommunicationService,
     private calendar: NgbCalendar) {
-    console.log('[component] - accounting - constructor');
+    // console.log('[component] - accounting - constructor');
     this.form = this.createInitialForm();
   }
 
   ngOnInit() {
-    console.log('[component] - accounting - ngOnInit');
+    // console.log('[component] - accounting - ngOnInit');
     forkJoin(
       {
         sellers: this.sellerService.getAllSellers(),
@@ -58,13 +64,20 @@ export class AccountingManagementComponent implements OnInit {
 
       this.initRecords();
       this.accumulatorListener = this.communicationService.getListener('accumulator');
+      this.accumulatorExpenseListener = this.communicationService.getListener('accumulatorExpense');
       this.accumulator = 0;
+      this.accumulatorExpense = 0;
       this.accumulatorListener.next(this.accumulator);
+      this.accumulatorExpenseListener.next(this.accumulatorExpense);
+
+      this.filterSeller = 'all';
+      this.selectAllRecordsChecked = false;
+      this.sellerListener = this.communicationService.getListener('seller');
     });
   }
 
   initRecords() {
-    console.log('[component] - accounting - initRecords');
+    // console.log('[component] - accounting - initRecords');
     const date = this.form.controls.currentDate.value;
     const currentDate =  `${date.year}-${date.month < 10 ? '0' + date.month : date.month}-${date.day < 10 ? '0' + date.day : date.day}`;
     this.recordService.getRecordsByDate(currentDate).subscribe(resp => {
@@ -74,7 +87,7 @@ export class AccountingManagementComponent implements OnInit {
   }
 
   createInitialForm() {
-    console.log('[component] - accounting - createInitialForm');
+    // console.log('[component] - accounting - createInitialForm');
     this.isCurrentDate = true;
     return new FormGroup({
       currentDate: new FormControl(
@@ -82,7 +95,8 @@ export class AccountingManagementComponent implements OnInit {
         [Validators.required]
       ),
       description: new FormControl(null),
-      price: new FormControl(null, [Validators.required]),
+      price: new FormControl(null),
+      expense: new FormControl(null),
       selectedProductId: new FormControl(null, [Validators.required]),
       selectedRecordId: new FormControl(null),
       selectedSellerId: new FormControl(null, [Validators.required]),
@@ -90,32 +104,40 @@ export class AccountingManagementComponent implements OnInit {
   }
 
   onDateSelection(date: NgbDate) {
-    console.log('[component] - accounting - onDateSelection', date);
+    // console.log('[component] - accounting - onDateSelection', date);
     this.isCurrentDate = this.calendar.getToday().equals(this.form.controls.currentDate.value);
     this.initRecords();
+    // reset acummulators and checkboxes and filters
+    this.accumulator = 0;
+    this.accumulatorExpense = 0;
+    this.accumulatorListener.next(this.accumulator);
+    this.accumulatorExpenseListener.next(this.accumulatorExpense);
+    this.selectAllRecordsChecked = false;
+    this.filterSeller = 'all';
   }
 
   setSelectedProduct(product: Product) {
-    console.log('[component] - accounting - setSelectedProduct', product);
+    // console.log('[component] - accounting - setSelectedProduct', product);
     this.form.controls.selectedProductId.setValue(product.uuid);
   }
 
   setSelectedSeller(seller: Seller) {
-    console.log('[component] - accounting - setSelectedSeller', seller);
+    // console.log('[component] - accounting - setSelectedSeller', seller);
     this.form.controls.selectedSellerId.setValue(seller.uuid);
   }
 
   setSelectedRecord(record: Record) {
-    console.log('[component] - accounting - setSelectedRecord', record);
+    // console.log('[component] - accounting - setSelectedRecord', record);
     this.form.controls.selectedRecordId.setValue(record.uuid);
     this.form.controls.selectedProductId.setValue(record.productId);
     this.form.controls.selectedSellerId.setValue(record.sellerId);
     this.form.controls.description.setValue(record.description);
     this.form.controls.price.setValue(record.price);
+    this.form.controls.expense.setValue(record.expense);
   }
 
   deleteRecord(formattedRecord: FormattedRecord) {
-    console.log('[component] - accounting - deleteRecord', formattedRecord);
+    // console.log('[component] - accounting - deleteRecord', formattedRecord);
     const record = this.records.find(r => r.uuid === formattedRecord.uuid);
     let modal = this.modalService.open(AppModalConfirmComponent);
     modal.componentInstance.text = `Esta seguro de querer <strong class="text-danger">ELIMINAR</strong> este registro? <strong class="text-primary">${formattedRecord.productName}</strong>`;
@@ -123,7 +145,7 @@ export class AccountingManagementComponent implements OnInit {
     modal.componentInstance.okButtonText = `<i class="fa fa-trash fa-fw mr-3"></i>Si, Eliminar`;
     modal.result.then(
       resp => {
-        console.log('[component] - accounting - deleteRecord - YES', resp);
+        // console.log('[component] - accounting - deleteRecord - YES', resp);
         this.recordService.removeRecord(record).subscribe(_ => {
           const recordIndex = this.records.findIndex((r => r.uuid === record.uuid));
           this.records.splice(recordIndex, 1);
@@ -138,31 +160,36 @@ export class AccountingManagementComponent implements OnInit {
             modal.componentInstance.okButtonText = `<i class="fa fa-check fa-fw mr-3"></i>Si`;
             modal.result.then(
               resp2 => {
-                console.log('[component] - accounting - recoverInventory - YES', resp2);
+                // console.log('[component] - accounting - recoverInventory - YES', resp2);
                 this.productService.manageInventory(record.productId, 'increase').subscribe(resp3 => {
-                  console.log('[component] - accounting - deleteRecord - decrease inventory', resp3);
+                  // console.log('[component] - accounting - deleteRecord - decrease inventory', resp3);
                   this.visibleProducts.find(p => p.uuid === record.productId).quantity++;
                 });
             });
           }
         });
       },
-      error => console.log('[component] - accounting - deleteRecord - NO', error)
+      error => {
+        // console.log('[component] - accounting - deleteRecord - NO', error)
+      }
     );
   }
 
   onSubmitForm(form: FormGroup) {
-    console.log('[component] - accounting - onSubmitForm', form);
+    // console.log('[component] - accounting - onSubmitForm', form);
     const record: Record = {
       productId: form.controls.selectedProductId.value,
       sellerId: form.controls.selectedSellerId.value,
       description: form.controls.description.value,
-      price: form.controls.price.value
+      price: form.controls.price.value,
+      expense: form.controls.expense.value,
     };
+    const product = this.allProducts.find(p => p.uuid === record.productId);
     if (form.controls.selectedRecordId.value) {
       record.uuid = form.controls.selectedRecordId.value;
       const recordIndex = this.records.findIndex((r => r.uuid === record.uuid));
       const recordBeforeChange = this.records[recordIndex];
+      const productBeforeChange = this.allProducts.find(p => p.uuid === recordBeforeChange.productId);
       this.recordService.updateRecord(record).subscribe(resp => {
         // update records array
         this.records[recordIndex] = resp.data;
@@ -174,18 +201,26 @@ export class AccountingManagementComponent implements OnInit {
         this.form.controls.selectedProductId.reset();
         this.form.controls.selectedSellerId.reset();
         this.form.controls.price.reset();
+        this.form.controls.expense.reset();
         this.form.controls.description.reset();
         // if product changed, swap inventory
         if (recordBeforeChange.productId !== record.productId) {
-          forkJoin({
-            before: this.productService.manageInventory(recordBeforeChange.productId, 'increase'),
-            after: this.productService.manageInventory(record.productId, 'decrease')
-          }).subscribe(resp2 => {
-            this.visibleProducts.find(p => p.uuid === recordBeforeChange.productId).quantity++;
-            this.visibleProducts.find(p => p.uuid === record.productId).quantity--;
+          const forkJoinOperations: any = {};
+          if (productBeforeChange.needsInventory) {
+            forkJoinOperations.before = this.productService.manageInventory(recordBeforeChange.productId, 'increase');
+          }
+          if (product.needsInventory) {
+            forkJoinOperations.after = this.productService.manageInventory(record.productId, 'decrease');
+          }
+          forkJoin(forkJoinOperations).subscribe(resp2 => {
+            if (productBeforeChange.needsInventory) {
+              this.visibleProducts.find(p => p.uuid === recordBeforeChange.productId).quantity++;
+            }
+            if (product.needsInventory) {
+              this.visibleProducts.find(p => p.uuid === record.productId).quantity--;
+            }
           });
         }
-
       });
     } else {
       record.isVisible = true;
@@ -197,11 +232,14 @@ export class AccountingManagementComponent implements OnInit {
         this.form.controls.selectedProductId.reset();
         this.form.controls.selectedSellerId.reset();
         this.form.controls.price.reset();
+        this.form.controls.expense.reset();
         this.form.controls.description.reset();
-        this.productService.manageInventory(record.productId, 'decrease').subscribe(resp2 => {
-          console.log('[component] - accounting - onSubmitForm - decrease inventory', resp2);
-          this.visibleProducts.find(p => p.uuid === record.productId).quantity--;
-        });
+        if (product.needsInventory) {
+          this.productService.manageInventory(record.productId, 'decrease').subscribe(resp2 => {
+            // console.log('[component] - accounting - onSubmitForm - decrease inventory', resp2);
+            this.visibleProducts.find(p => p.uuid === record.productId).quantity--;
+          });
+        }
       });
     }
   }
@@ -214,6 +252,7 @@ export class AccountingManagementComponent implements OnInit {
      this.form.controls.selectedProductId.reset();
      this.form.controls.selectedSellerId.reset();
      this.form.controls.price.reset();
+     this.form.controls.expense.reset();
      this.form.controls.description.reset();
   }
 
@@ -222,7 +261,7 @@ export class AccountingManagementComponent implements OnInit {
    * @param selected NgbDate object
    */
   calculateTimestamp(selected: NgbDate) {
-    console.log('[component] - accounting - calculateTimestamp', selected);
+    // console.log('[component] - accounting - calculateTimestamp', selected);
     if (this.calendar.getToday().equals(selected)) {
       return Math.floor(Date.now() / 1000);
     }
@@ -230,12 +269,12 @@ export class AccountingManagementComponent implements OnInit {
   }
 
   formatRecords(records: Record[]): FormattedRecord[] {
-    // console.log('[component] - accounting - formatRecords', records);
+    // // console.log('[component] - accounting - formatRecords', records);
     return records.map(r => this.formatRecord(r));
   }
 
   formatRecord(record: Record): FormattedRecord {
-    // console.log('[component] - accounting - formatRecord', record);
+    // // console.log('[component] - accounting - formatRecord', record);
     const date = new Date(record.timestamp * 1000);
     const hour = '' + (date.getHours() > 12 ? date.getHours() - 12 : date.getHours());
     const minute = '' + (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
@@ -253,12 +292,14 @@ export class AccountingManagementComponent implements OnInit {
       productId: record.productId,
       productName,
       price: record.price,
+      expense: record.expense,
       sellerId: record.sellerId,
       sellerName,
       description: record.description,
       productImage,
       needsInventory: product.needsInventory,
-      checked: false
+      checked: false,
+      rendered: true,
     };
   }
 
@@ -274,24 +315,47 @@ export class AccountingManagementComponent implements OnInit {
   }
 
   updateSum($event: any, record: Record) {
-    console.log('[component] - accounting - updateSum');
+    // console.log('[component] - accounting - updateSum');
     this.accumulator += $event.target.checked ? record.price : record.price * -1;
+    this.accumulatorExpense += $event.target.checked ? record.expense : record.expense * -1;
     this.accumulatorListener.next(this.accumulator);
+    this.accumulatorExpenseListener.next(this.accumulatorExpense);
   }
 
   toggleAll($event: any) {
-    console.log('[component] - accounting - toggleAll');
+    // console.log('[component] - accounting - toggleAll');
     this.accumulator = 0;
+    this.accumulatorExpense = 0;
     this.formattedRecords.forEach(f => {
-      f.checked = $event.target.checked;
-      this.accumulator += $event.target.checked ? f.price : 0;
+      // only accumulate for rendered rows
+      if (f.rendered) {
+        f.checked = $event.target.checked;
+        this.accumulator += $event.target.checked ? f.price : 0;
+        this.accumulatorExpense += $event.target.checked ? f.expense : 0;
+      }
     }, this);
     this.accumulatorListener.next(this.accumulator);
+    this.accumulatorExpenseListener.next(this.accumulatorExpense);
+  }
+
+
+  filterBySeller() {
+    // reset accumulator and checkboxes when filter changes
+    this.accumulator = 0;
+    this.accumulatorExpense = 0;
+    this.accumulatorListener.next(this.accumulator);
+    this.accumulatorExpenseListener.next(this.accumulatorExpense);
+    this.selectAllRecordsChecked = false;
+    this.formattedRecords.forEach(f => {
+      f.checked = false;
+      f.rendered = this.filterSeller === 'all' ? true : this.filterSeller === f.sellerId;
+    }, this);
+    console.log('filterBySeller - ', this.filterSeller);
   }
 
 
   // private createTicketId(): string {
-  //   console.log('[component] - accounting - createTicketId');
+  //   // console.log('[component] - accounting - createTicketId');
   //   const ticketId = 'T' + Date.now();
   //   return ticketId;
   // }

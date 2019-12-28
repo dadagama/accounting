@@ -30,18 +30,32 @@
                         class="fa fa-fw fa-info mr-2"></i>Acerca De</a>
             </li>
         </ul>
-        <form class="form-inline admin-form mr-3">
-            <div class="input-group">
+        <form class="form-inline accumulators-form">
+            <div class="input-group mr-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text" [ngClass]="{'bg-success text-white': adminMode}"><i class="fa fa-fw fa-key"></i></span>
+                    <span class="input-group-text"><i class="fa fa-fw fa-dollar-sign text-success"></i></span>
                 </div>
-                <input type="password" class="form-control" aria-label="adminPass" name="adminPass" [ngClass]="{'bg-success text-white': adminMode}"
-                    [(ngModel)]="adminPass" (change)="toggleAdminMode()"/>
+                <input type="text" class="form-control read-only" readonly aria-label="accumulator" name="accumulator"
+                    [ngModel]="accumulator$ | async | currency:'':'':'1.0-0'" />
+            </div>
+            <div class="input-group mr-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-fw fa-dollar-sign text-danger"></i></span>
+                </div>
+                <input type="text" class="form-control read-only" readonly aria-label="accumulatorExpense" name="accumulatorExpense"
+                    [ngModel]="accumulatorExpense$ | async | currency:'':'':'1.0-0'" />
             </div>
         </form>
-        <form class="form-inline accumulator-form">
-            <input type="text" class="form-control read-only" readonly aria-label="accumulator" name="accumulator"
-                [ngModel]="accumulator$ | async | currency:'':'$':'1.0-0'" />
+        <form class="form-inline admin-form">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" [ngClass]="{'bg-success text-white': adminMode}"><i
+                            class="fa fa-fw fa-key"></i></span>
+                </div>
+                <input type="password" class="form-control" aria-label="adminPass" name="adminPass"
+                    [ngClass]="{'bg-success text-white': adminMode}" [(ngModel)]="adminPass"
+                    (change)="toggleAdminMode()" />
+            </div>
         </form>
     </div>
 </nav>

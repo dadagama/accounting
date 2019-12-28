@@ -11,18 +11,18 @@ export class CommunicationService {
   constructor() { }
 
   addListener(name: string): Subject<any> {
-    console.log('[service] - CommunicationService - addListener');
+    // console.log('[service] - CommunicationService - addListener');
     this.listeners[name] = new Subject();
     return this.listeners[name];
   }
 
   getListener(name: string): Subject<any> {
-    console.log('[service] - CommunicationService - getListener');
+    // console.log('[service] - CommunicationService - getListener');
     return this.listeners[name];
   }
 
   removeListener(name: string): void {
-    console.log('[service] - CommunicationService - removeListener');
+    // console.log('[service] - CommunicationService - removeListener');
     delete(this.listeners[name]);
   }
 }

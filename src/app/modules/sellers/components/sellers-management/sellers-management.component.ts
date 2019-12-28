@@ -20,19 +20,19 @@ export class SellersManagementComponent implements OnInit {
   constructor(
     private sellerService: SellerService,
     private utilitiesService: UtilitiesService) {
-    console.log('[component] - sellers - constructor');
+    // console.log('[component] - sellers - constructor');
     this.form = this.createInitialForm();
   }
 
   ngOnInit() {
-    console.log('[component] - sellers - ngOnInit');
+    // console.log('[component] - sellers - ngOnInit');
     this.sellerService.getAllSellers().subscribe(resp => {
       this.sellers = resp.data;
     });
   }
 
   createInitialForm() {
-    console.log('[component] - sellers - createInitialForm');
+    // console.log('[component] - sellers - createInitialForm');
     return new FormGroup({
       isVisible: new FormControl('true', [Validators.required]),
       name: new FormControl(null, [Validators.required]),
@@ -41,7 +41,7 @@ export class SellersManagementComponent implements OnInit {
   }
 
   onNeedsSellers(event) {
-    console.log('[component] - sellers - onNeedsSellers', event);
+    // console.log('[component] - sellers - onNeedsSellers', event);
     if (this.form.controls.needsSellers.value === 'true') {
       this.form.addControl('quantity', new FormControl('', [Validators.required]));
     } else {
@@ -50,13 +50,13 @@ export class SellersManagementComponent implements OnInit {
   }
 
   onRemoveSeller(seller: any) {
-    console.log('[component] - sellers - onRemoveSeller', seller);
+    // console.log('[component] - sellers - onRemoveSeller', seller);
     this.sellerService.removeSeller(seller);
     return true;
   }
 
   onSubmitForm() {
-    console.log('[component] - sellers - onSubmitForm', this.form);
+    // console.log('[component] - sellers - onSubmitForm', this.form);
     if (this.form.invalid) {
       return this.utilitiesService.markFormGroupTouched(this.form);
     }
@@ -81,7 +81,7 @@ export class SellersManagementComponent implements OnInit {
   }
 
   saveSeller(seller: Seller) {
-    console.log('[component] - sellers - saveSeller', seller);
+    // console.log('[component] - sellers - saveSeller', seller);
   }
 
   trackByIdFn(index: number, el: Seller) {
@@ -89,7 +89,7 @@ export class SellersManagementComponent implements OnInit {
   }
 
   setSelectedSeller(seller: Seller) {
-    console.log('[component] - sellers - setSelectedRecord', seller);
+    // console.log('[component] - sellers - setSelectedRecord', seller);
     this.form.controls.selectedSellerId.setValue(seller.uuid);
     this.form.controls.name.setValue(seller.name);
     this.form.controls.isVisible.setValue(seller.isVisible ? 'true' : 'false');

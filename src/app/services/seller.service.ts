@@ -12,19 +12,19 @@ export class SellerService {
   constructor(private apiService: APIService) { }
 
   addSeller(seller: Seller): Observable<PostResponse> {
-    console.log('[service] - seller - addSeller');
+    // console.log('[service] - seller - addSeller');
     return this.apiService.save(seller, 'sellers');
   }
   updateSeller(seller: Seller): Observable<PutResponse> {
-    console.log('[service] - seller - updateSeller');
+    // console.log('[service] - seller - updateSeller');
     return this.apiService.update(seller, 'sellers');
   }
   removeSeller(seller: Seller): Observable<PutResponse> {
-    console.log('[service] - seller - removeSeller');
+    // console.log('[service] - seller - removeSeller');
     return this.apiService.remove(seller.uuid, 'sellers');
   }
   getAllSellers(): Observable<GetAllResponse> {
-    console.log('[service] - seller - getAllSellers');
+    // console.log('[service] - seller - getAllSellers');
     return this.apiService.getAll('sellers');
   }
   getSellerById(id: string): Observable<GetResponse> {

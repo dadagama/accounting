@@ -113,11 +113,11 @@ export class ReportsComponent implements OnInit {
   }
 
   onDateSelection(date: NgbDate) {
-    console.log('[component] - reports - onDateSelection', date);
+    // console.log('[component] - reports - onDateSelection', date);
   }
 
   onRangeSelection(date: NgbDate) {
-    console.log('[component] - reports - onRangeSelection', date);
+    // console.log('[component] - reports - onRangeSelection', date);
     if (!this.fromDate && !this.toDate) {
       this.fromDate = date;
     } else if (this.fromDate && !this.toDate && date.after(this.fromDate)) {
@@ -152,15 +152,15 @@ export class ReportsComponent implements OnInit {
 
   // events
   public chartClicked({ event, active }: { event: MouseEvent, active: {}[] }): void {
-    console.log(event, active);
+    // console.log(event, active);
   }
 
   public chartHovered({ event, active }: { event: MouseEvent, active: {}[] }): void {
-    console.log(event, active);
+    // console.log(event, active);
   }
 
   createInitialForm() {
-    console.log('[component] - reports - createInitialForm');
+    // console.log('[component] - reports - createInitialForm');
     const formGroup = new FormGroup({
       reportType: new FormControl(null, [Validators.required]),
       dateType: new FormControl('day', [Validators.required])
@@ -169,7 +169,7 @@ export class ReportsComponent implements OnInit {
   }
 
   setDateFromControl(formGroup: FormGroup) {
-    console.log('[component] - reports - setDateFromControl');
+    // console.log('[component] - reports - setDateFromControl');
     switch (formGroup.controls.dateType.value) {
       case 'day':
         formGroup.removeControl('startDate');
@@ -188,7 +188,7 @@ export class ReportsComponent implements OnInit {
   }
 
   onSubmitForm(form: FormGroup) {
-    console.log('[component] - reports - onSubmitForm');
+    // console.log('[component] - reports - onSubmitForm');
     const params = { ...form.value };
     switch (params.dateType) {
       case 'day':

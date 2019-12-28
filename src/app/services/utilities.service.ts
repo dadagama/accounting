@@ -13,7 +13,7 @@ export class UtilitiesService {
   constructor() { }
 
   markFormGroupTouched(formGroup: FormGroup) {
-    console.log('[Service] - utilities - markFormGroupTouched');
+    // console.log('[Service] - utilities - markFormGroupTouched');
     if (formGroup.controls) {
       const keys = Object.keys(formGroup.controls);
       for (const key of keys) {

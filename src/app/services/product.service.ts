@@ -11,22 +11,22 @@ import { PutResponse, PostResponse, GetAllResponse, GetResponse } from '../inter
 export class ProductService {
 
   constructor(private apiService: APIService) {
-    console.log('[service] - product - constructor');
+    // console.log('[service] - product - constructor');
   }
   addProduct(product: Product): Observable<PostResponse> {
-    console.log('[service] - product - addProduct');
+    // console.log('[service] - product - addProduct');
     return this.apiService.save(product, 'products');
   }
   updateProduct(product: Product): Observable<PutResponse> {
-    console.log('[service] - product - updateProduct');
+    // console.log('[service] - product - updateProduct');
     return this.apiService.update(product, 'products');
   }
   removeProduct(product: Product): Observable<PutResponse> {
-    console.log('[service] - product - removeProduct');
+    // console.log('[service] - product - removeProduct');
     return this.apiService.remove(product.uuid, 'products');
   }
   getAllProducts(): Observable<GetAllResponse> {
-    console.log('[service] - product - getAllProducts');
+    // console.log('[service] - product - getAllProducts');
     return this.apiService.getAll('products');
   }
   getProductById(id: string): Observable<GetResponse> {

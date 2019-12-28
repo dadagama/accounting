@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommunicationService } from './services/communication.service';
-import { Subject } from 'rxjs';
+import { Subject, forkJoin } from 'rxjs';
 import { AdminGuardService } from './services/admin-guard.service';
 
 @Component({
@@ -13,12 +13,14 @@ export class AppComponent {
   adminMode: boolean;
   adminPass: string;
   accumulator$: Subject<number>;
+  accumulatorExpense$: Subject<number>;
 
   constructor(
     private communicationService: CommunicationService,
     private adminGuardService: AdminGuardService) {
     this.expanded = false;
     this.accumulator$ = this.communicationService.addListener('accumulator');
+    this.accumulatorExpense$ = this.communicationService.addListener('accumulatorExpense');
   }
 
   toggleMenu() {

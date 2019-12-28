@@ -20,19 +20,19 @@ export class InventoryManagementComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private utilitiesService: UtilitiesService) {
-    console.log('[component] - inventory - constructor');
+    // console.log('[component] - inventory - constructor');
     this.form = this.createInitialForm();
   }
 
   ngOnInit() {
-    console.log('[component] - inventory - ngOnInit');
+    // console.log('[component] - inventory - ngOnInit');
     this.productService.getAllProducts().subscribe(resp => {
       this.products = resp.data;
     });
   }
 
   createInitialForm() {
-    console.log('[component] - inventory - createInitialForm');
+    // console.log('[component] - inventory - createInitialForm');
     return new FormGroup({
       image: new FormControl(null),
       isVisible: new FormControl('true', [Validators.required]),
@@ -44,7 +44,7 @@ export class InventoryManagementComponent implements OnInit {
   }
 
   onNeedsInventory(event) {
-    console.log('[component] - inventory - onNeedsInventory', event);
+    // console.log('[component] - inventory - onNeedsInventory', event);
     if (this.form.controls.needsInventory.value === 'true') {
       this.form.addControl('quantity', new FormControl('', [Validators.required]));
     } else {
@@ -53,7 +53,7 @@ export class InventoryManagementComponent implements OnInit {
   }
 
   onSubmitForm() {
-    console.log('[component] - inventory - onSubmitForm', this.form);
+    // console.log('[component] - inventory - onSubmitForm', this.form);
     if (this.form.invalid) {
       return this.utilitiesService.markFormGroupTouched(this.form);
     }
@@ -89,7 +89,7 @@ export class InventoryManagementComponent implements OnInit {
   }
 
   setSelectedProduct(product: Product) {
-    console.log('[component] - inventory - setSelectedRecord', product);
+    // console.log('[component] - inventory - setSelectedRecord', product);
     this.form.controls.selectedProductId.setValue(product.uuid);
     this.form.controls.image.setValue(product.image);
     this.form.controls.name.setValue(product.name);
