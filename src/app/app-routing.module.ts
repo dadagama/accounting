@@ -6,12 +6,14 @@ import { ReportsComponent } from './modules/reports/components/reports/reports.c
 import { AboutComponent } from './components/about/about.component';
 import { SellersManagementComponent } from './modules/sellers/components/sellers-management/sellers-management.component';
 import { AdminGuardService } from './services/admin-guard.service';
+import { CustomersManagementComponent } from './modules/customers/components/customers-management/customers-management.component';
 
 const routes: Routes = [
   // { path: 'contabilidad/:date', component: AccountingManagementComponent },
   { path: 'contabilidad', component: AccountingManagementComponent },
   { path: 'inventario', component: InventoryManagementComponent, canActivate: [AdminGuardService] },
   { path: 'vendedores', component: SellersManagementComponent, canActivate: [AdminGuardService] },
+  { path: 'clientes', component: CustomersManagementComponent, canActivate: [AdminGuardService] },
   { path: 'reportes', component: ReportsComponent, canActivate: [AdminGuardService] },
   { path: 'acerca-de', component: AboutComponent },
   { path: '', redirectTo: '/contabilidad', pathMatch: 'full'},

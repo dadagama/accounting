@@ -1,17 +1,19 @@
 export interface FormattedRecord {
+    checked: boolean;
+    customerId?: string;
+    customerName?: string;
     date: string;
     description?: string;
-    price: number;
     expense: number;
+    needsInventory?: boolean;
+    price: number;
+    productId?: string;
     productImage?: string;
     productName: string;
-    productId?: string;
+    rendered: boolean;
+    selected?: boolean;
     sellerId?: string;
     sellerName?: string;
-    selected?: boolean;
-    needsInventory?: boolean;
-    checked: boolean;
-    rendered: boolean;
     // ticketId?: string;
     uuid?: string;
 }

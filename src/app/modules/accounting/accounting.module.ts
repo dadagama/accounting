@@ -7,7 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 // Extra Modules
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 // Services
-import { ProductService, RecordService, SellerService } from 'src/app/services';
+import { ProductService, RecordService, SellerService, CustomerService } from 'src/app/services';
 // Components
 import { AccountingManagementComponent } from './components/accounting-management/accounting-management.component';
 import { AppModalConfirmComponent } from 'src/app/components/app-modal-confirm/app-modal-confirm.component';
@@ -29,6 +29,6 @@ import { SharedModule } from '../shared/shared.module';
     AppModalConfirmComponent
   ],
   exports: [AccountingManagementComponent],
-  providers: [ProductService, SellerService, RecordService]
+  providers: [ProductService, SellerService, RecordService, CustomerService]
 })
 export class AccountingModule { }

@@ -1,0 +1,91 @@
+<div class="row">
+  <div class="col-md-3">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Agregar Cliente</h5>
+        <div class="card-text">
+          <form [formGroup]="form" (ngSubmit)="onSubmitForm()" novalidate>
+            <div class="form-group mandatory-field">
+              <label for="name">Nombre</label>
+              <input type="text" class="form-control" id="name" formControlName="name"
+                placeholder="Ingrese el nombre del cliente" />
+            </div>
+            <div class="form-group">
+              <label for="name">E-mail</label>
+              <input type="text" class="form-control" id="email" formControlName="email"
+                placeholder="Ingrese el correo electronico" />
+            </div>
+            <div class="form-group">
+              <label for="name">Teléfono</label>
+              <input type="text" class="form-control" id="phone" formControlName="phone"
+                placeholder="Ingrese número de contacto" />
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-fw fa-calendar-alt mr-2"></i><small>Cumpleaños</small></span>
+                </div>
+                <input class="form-control" placeholder="yyyy-mm-dd" name="dp" formControlName="birthday"
+                  (click)="d.toggle()" ngbDatepicker #d="ngbDatepicker" />
+              </div>
+            </div>
+            <div class="form-group mandatory-field">
+              <label for="isVisible">Es Visible en contabilidad</label>
+              <select class="form-control" id="isVisible" formControlName="isVisible">
+                <option value="false">No</option>
+                <option value="true">Si</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn mr-3" [disabled]="form.invalid"
+                [ngClass]="{'btn-primary': form.valid && !form.controls.selectedCustomerId.value, 'btn-success': form.valid && form.controls.selectedCustomerId.value, 'btn-dark': form.invalid}">
+                <i class="fa mr-3" [ngClass]="{'fa-plus': !form.controls.selectedCustomerId.value}"></i>
+                {{form.controls.selectedCustomerId.value ? 'Actualizar' : 'Agregar'}}
+              </button>
+              <button *ngIf="form.valid" class="btn btn-warning" (click)="reset()"><i
+                  class="fa fa-times mr-3"></i>Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-9">
+    <table class="table table-striped table-hover table-compact">
+      <thead class="thead-dark">
+        <tr>
+          <th>Nombre</th>
+          <th>E-Mail</th>
+          <th>Teléfono</th>
+          <th>Cumpleaños</th>
+          <th>Es Visible</th>
+          <th style="width: 80px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let customer of customers; trackBy: trackByIdFn"
+          [ngClass]="{'bg-success': customer.uuid === form.controls.selectedCustomerId.value}">
+          <td>{{customer.name}}</td>
+          <td>{{customer.email}}</td>
+          <td>{{customer.phone}}</td>
+          <td>{{customer.birthday | date:'longDate'}}</td>
+          <td>
+            <span *ngIf="customer.isVisible">
+              <i class="fa fa-fw fa-check text-primary"></i>
+            </span>
+            <span *ngIf="!customer.isVisible">
+              <i class="fa fa-fw fa-times text-danger"></i>
+            </span>
+          </td>
+          <td>
+            <button type="button" class="btn btn-light mr-3" (click)="setSelectedCustomer(customer)">
+              <i class="fa fa-edit"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot></tfoot>
+    </table>
+  </div>
+</div>

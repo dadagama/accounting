@@ -23,24 +23,24 @@ export class APIService {
   //  OPERATIONS  //
   //////////////////
 
-  get(uuid: string, type: 'sellers' | 'records' | 'products'): Observable<GetResponse> {
+  get(uuid: string, type: 'sellers' | 'records' | 'products' | 'customers'): Observable<GetResponse> {
     // console.log('[service] - api - get');
     return this.http.get<GetResponse>(`${this.BASE_URL}/${type}/${uuid}`);
   }
-  getAll(type: 'sellers' | 'records' | 'products'): Observable<GetAllResponse> {
+  getAll(type: 'sellers' | 'records' | 'products' | 'customers'): Observable<GetAllResponse> {
     // console.log('[service] - api - getAll');
     return this.http.get<GetAllResponse>(`${this.BASE_URL}/${type}`);
   }
-  remove(uuid: string, type: 'sellers' | 'records' | 'products'): Observable<PutResponse> {
+  remove(uuid: string, type: 'sellers' | 'records' | 'products' | 'customers'): Observable<PutResponse> {
     // console.log('[service] - api - remove', uuid);
     const body = { isVisible: false };
     return this.http.put<PutResponse>(`${this.BASE_URL}/${type}/${uuid}`, body);
   }
-  save(item: Record | Product | Seller, type: 'sellers' | 'records' | 'products'): Observable<PostResponse> {
+  save(item: Record | Product | Seller, type: 'sellers' | 'records' | 'products' | 'customers'): Observable<PostResponse> {
     // console.log('[service] - api - save', type, item);
     return this.http.post<PutResponse>(`${this.BASE_URL}/${type}`, item);
   }
-  update(item: Record | Product | Seller, type: 'sellers' | 'records' | 'products'): Observable<PutResponse> {
+  update(item: Record | Product | Seller, type: 'sellers' | 'records' | 'products' | 'customers'): Observable<PutResponse> {
     // console.log('[service] - api - update', type, item);
     return this.http.put<PutResponse>(`${this.BASE_URL}/${type}/${item.uuid}`, item);
   }
@@ -58,5 +58,9 @@ export class APIService {
   getRecordsByDate(date: string): Observable<GetResponse> {
     // console.log('[service] - api - getRecordsByDate', date);
     return this.http.get<GetResponse>(`${this.BASE_URL}/records/byDate/${date}`);
+  }
+  backup(param): Observable<any> {
+    console.log('[service] - api - backup');
+    return this.http.post<GetResponse>(`${this.BASE_URL}/backup`, {params: { param }});
   }
 }

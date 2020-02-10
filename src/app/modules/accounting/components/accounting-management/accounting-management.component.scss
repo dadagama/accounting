@@ -4,9 +4,20 @@
     }
 }
 .product-button, .seller-button {
-    width: 100px;
+    width: 90px;
+    padding: 5px;
     .product-name, .seller-name {
         font-size: 0.7em;
+    }
+}
+.left-form{
+    .input-group {
+        .input-group-prepend{
+            .input-group-text{
+                padding: 5px;
+                width: 100px;
+            }
+        }
     }
 }
 :host ::ng-deep {

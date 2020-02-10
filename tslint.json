@@ -63,10 +63,7 @@
     "no-submodule-imports": [
       true,
       "zone.js",
-      "@angular",
-      "src/app/services",
-      "src/app/interfaces",
-      "src/app/components"
+      "@angular"
     ],
     "no-implicit-dependencies": [true, ["src", "protractor"]],
     "trailing-comma": false,

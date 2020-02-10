@@ -11,7 +11,7 @@ import { Seller } from 'src/app/interfaces/seller';
   selector: 'app-sellers-management',
   templateUrl: './sellers-management.component.html',
   styleUrls: ['./sellers-management.component.scss'],
-  encapsulation: ViewEncapsulation.Emulated
+  // encapsulation: ViewEncapsulation.Emulated
 })
 export class SellersManagementComponent implements OnInit {
   form: FormGroup;
@@ -38,15 +38,6 @@ export class SellersManagementComponent implements OnInit {
       name: new FormControl(null, [Validators.required]),
       selectedSellerId: new FormControl(null)
     });
-  }
-
-  onNeedsSellers(event) {
-    // console.log('[component] - sellers - onNeedsSellers', event);
-    if (this.form.controls.needsSellers.value === 'true') {
-      this.form.addControl('quantity', new FormControl('', [Validators.required]));
-    } else {
-      this.form.removeControl('quantity');
-    }
   }
 
   onRemoveSeller(seller: any) {
