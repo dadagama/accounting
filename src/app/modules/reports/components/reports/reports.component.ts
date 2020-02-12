@@ -97,6 +97,7 @@ export class ReportsComponent implements OnInit {
     { id: 'range', name: 'Rango de fechas' }
   ];
   reports = [
+    { id: 'ExpensesBySeller', name: 'Gastos por Vendedor' },
     { id: 'EarningsBySeller', name: 'Ingresos por Vendedor' },
     { id: 'EarningsByProduct', name: 'Ingresos por Producto' },
     // {id: 'EarningsByTag', name: 'Ingresos por Etiqueta'},
